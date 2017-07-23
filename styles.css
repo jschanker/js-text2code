@@ -1,0 +1,259 @@
+html, body {
+  height: 100%;
+  margin: 0px;
+  background-color:#33beb6;
+}
+
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+body {
+  font-family: verdana, sans-serif;
+}
+
+header {
+	padding:0px 10px;
+	text-align: center;
+	background-color:#292929;
+    margin-top: 0px;
+}
+
+#textHeader, #codeTextHeader {
+	/*color:#007700;*/
+	color:#ffffff;
+	/*color:#33beb6;*/
+}
+
+@media screen and (max-width: 500px) {
+	header {
+		font-size: 115%;
+	}
+}
+
+@media screen and (min-width: 500px) and (max-width: 599px) {
+	header {
+		font-size: 150%;
+	}
+}
+
+@media screen and (min-width: 600px) and (max-width: 699px) {
+	header {
+		font-size: 200%;
+	}
+}
+
+@media screen and (min-width: 700px) and (max-width: 799px) {
+	header {
+		font-size: 250%;
+	}
+}
+
+@media screen and (min-width: 800px) {
+	header {
+		font-size: 300%;
+	}
+}
+
+#blockly-div {
+  height: 500px;
+}
+
+#all-content {
+    margin: 0.5% 5.5%;
+}
+
+
+#twoHeader {
+	background-color: #aaa;
+	color: #292929; 
+	padding: 0px 30px;
+	border-radius:500px;
+}
+
+
+footer {
+	font-size: 70%;
+	color: #fff;
+	padding: 10px;
+	text-align: center;
+	background-color:#292929;
+}
+
+/*#spreadsheet-container {*/
+.spreadsheet-container-hide {
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  margin-left:-95%;
+  position: fixed;
+  /*border-right: 40px solid rgba(230, 230, 230, 0.7);*/
+  transition: 1s;
+  background-color: #888;
+  text-align: right;
+  z-index: 1;
+  overflow:auto;
+  /*background-color: black;*/
+}
+
+.spreadsheet-container-show {
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  margin-left:-95%;
+  position: fixed;
+  /*border-right: 40px solid rgba(230, 230, 230, 0.7);*/
+  transition: 1s;
+  background-color: #888;
+  text-align: right;
+  z-index: 1;
+  overflow:auto;
+  /*background-color: black;*/
+}
+
+/*#spreadsheet-container:hover {*/
+.spreadsheet-container-show {
+  margin-left:0%;
+  z-index: 2;
+  transition: 1s;
+}
+
+/*#spreadsheet-container:hover .tab-container * {*/
+.spreadsheet-container-show .tab-container * {
+  /*border: 2px solid red;*/
+  display: none;
+}
+
+/*#spreadsheet-container:hover table#spreadsheet {*/
+.spreadsheet-container-show table#spreadsheet {
+  /*border: 2px solid red;*/
+  margin-top:56px;
+}
+
+.repl-container-hide {
+  margin-left:95%;
+}
+
+#repl {
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  /*margin-left:95%;*/
+  position: fixed;
+  border-left: 40px solid rgba(230, 230, 230, 0.7);
+  transition: 1s;
+  background-color: #888;
+  /*background-color: black;*/
+}
+
+.tab-text {
+    font-weight: bold;
+    /*padding: 70px 0 0 0;
+    margin-left: -90px;*/
+    -webkit-transform:rotate(270deg);
+    -moz-transform:rotate(270deg);
+    -o-transform:rotate(270deg);
+    -ms-transform:rotate(270deg);
+    transform:rotate(270deg);
+    color: #000;
+    display: inline-block;
+}
+
+.tab-text-left {
+    padding-top: 128px;
+    margin-right: 27px;
+    /*
+    -webkit-transform:rotate(270deg) translate(-100%, 0);
+    -moz-transform:rotate(270deg) translate(-100%, 0);
+    -o-transform:rotate(270deg) translate(-100%, 0);
+    -ms-transform:rotate(270deg) translate(-100%, 0);
+    transform:rotate(270deg) translate(-100%, 0);
+    */
+}
+
+.tab-text-right {
+    padding: 70px 0 0 0;
+    margin-left: -90px;
+    /*
+    -webkit-transform:rotate(270deg) translate(-70px, -45px);
+    -moz-transform:rotate(270deg) translate(-70px, -45px);
+    -o-transform:rotate(270deg) translate(-70px, -45px);
+    -ms-transform:rotate(270deg) translate(-70px, -45px);
+    transform:rotate(270deg) translate(-70px, -45px);
+    */
+}
+
+table#spreadsheet {
+  margin-top:-90px;
+  margin-left:10px;
+  border: 1px solid gray;
+  border-spacing: 5px;
+  background-color: white;
+
+  border-spacing: 0px;
+  border-collapse: collapse;
+  border: 1px solid black;
+}
+
+table#spreadsheet .cell-heading {
+  background-color: #ccc;
+  border: 1px solid black;
+}
+
+table#spreadsheet td {
+  text-align: center;
+
+  padding: 0;
+  border-left: 1px solid #aaa;
+  border-top: 1px solid #aaa;
+}
+
+table#spreadsheet input {
+  text-align: right;
+
+  border: 0;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+}
+
+.cell-heading {
+  text-align: center;
+
+  background-color: #c0c0c0;
+}
+
+.cell-result-heading, .cell-result {
+  background-color: #ffff00;
+
+  border: 1px solid black;
+}
+
+/*#repl:hover {*/
+.repl-container-show {
+  margin-left:0%;
+  transition: 1s;
+  z-index: 2;
+}
+
+iframe {
+  margin-top:-90px;
+  height: 100%;
+  width: 90%;
+}
+
+textarea {
+  font-size:medium;
+  color:green;
+  width:40%;
+  height:200px;
+  scroll:true;
+}
+
+button {
+  padding: 2px;
+}
