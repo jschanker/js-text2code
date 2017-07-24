@@ -1,0 +1,5 @@
+Blockly.Blocks['{{type}}'] = {
+  init: function() {
+    this.jsonInit({{$block}});
+  }
+};
