@@ -1,0 +1,365 @@
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset = "utf-8">
+    <title>Text 2 Code</title>
+    <link rel = "stylesheet" href = "styles.css">
+    <script src="blockly/blockly_compressed.js"></script>
+    <script src="blockly/blocks_compressed.js"></script>
+    <script src="blockly/javascript_compressed.js"></script>
+    <!--<script src="blockly/python_compressed.js"></script>-->
+    <script src="blockly/msg/js/en.js"></script>
+    <script src="blockly/generators/javascript/time.js"></script>
+    <script src="blockly/blocks/time_blocks.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1><span id = "textHeader">Text</span> <span id = "twoHeader">2</span> <span id = "codeTextHeader">Code</span></h1>
+    </header>
+    <div id = "spreadsheet-container" class = "spreadsheet-container-hide">
+      <div class = "tab-container"><span class = "tab-text tab-text-left">Spreadsheet</span></div>
+      <form id = "spreadsheet-form">
+        <table id = "spreadsheet">
+        </table>
+      </form>
+    </div>
+    <div id = "all-content">
+        <div id = "blockly-div">
+          <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
+              <category name="Input/Output" colour="160">
+                <block type="result_cell_column"></block>
+                <block type="input_cell"></block>
+                <block type="input_cell_range"></block>
+                <block type="units_print"></block>
+                <block type="print_in_result_cell"></block>
+                <!--<block type ="prompt_for"></block>-->
+                <block type="prompt_for_number"></block>
+                <block type="prompt_for_text"></block>
+              </category>
+              <category name="Variables" custom="VARIABLE" colour="330">
+              </category>
+              <category name="Time Conversions" colour="200">
+                <!--<block type="variable_general_set"></block>-->
+                <block type="math_number_general"></block>
+                <!--<block type="seconds_number"></block>
+                <block type="minutes_number"></block>
+                <block type="hours_number"></block>
+                <block type="days_number"></block>-->
+                <block type="seconds_to_minutes"></block>
+                <block type="minutes_to_hours"></block>
+                <block type="hours_to_days"></block>
+                <block type="remaining_seconds"></block>
+                <block type="remaining_minutes"></block>
+                <block type="remaining_hours"></block>
+              </category>
+              <!--<category name="Time Variables" colour="#a55b6d">
+                <block type="seconds_variable_set">
+                  <field name="VAR">num_of_seconds</field>
+                </block>
+                <block type="minutes_variable_set">
+                  <field name="VAR">num_of_minutes</field>
+                </block>
+                <block type="hours_variable_set">
+                  <field name="VAR">num_of_hours</field>
+                </block>
+                <block type="days_variable_set">
+                  <field name="VAR">num_of_days</field>
+                </block>
+                <block type="variables_get">
+                  <field name="VAR">num_of_seconds</field>
+                </block>
+                <block type="variables_get">
+                  <field name="VAR">num_of_minutes</field>
+                </block>
+                <block type="variables_get">
+                  <field name="VAR">num_of_hours</field>
+                </block>
+                <block type="variables_get">
+                  <field name="VAR">num_of_days</field>
+                </block>
+              </category>-->
+              <category name="Currency Conversions" colour="120">
+                <block type="math_number_general"></block>
+                <!--<block type="pennies_number"></block>
+                <block type="nickels_number"></block>
+                <block type="quarters_number"></block>
+                <block type="dollars_number"></block>-->
+                <block type="pennies_to_nickels"></block>
+                <block type="nickels_to_quarters"></block>
+                <block type="quarters_to_dollars"></block>
+                <block type="remaining_pennies"></block>
+                <block type="remaining_nickels"></block>
+                <block type="remaining_quarters"></block>
+              </category>
+              <!--<category name="Currency Variables" colour="#a55b6d">
+                <block type="pennies_variable_set">
+                  <field name="VAR">num_of_pennies</field>
+                </block>
+                <block type="nickels_variable_set">
+                  <field name="VAR">num_of_nickels</field>
+                </block>
+                <block type="quarters_variable_set">
+                  <field name="VAR">num_of_quarters</field>
+                </block>
+                <block type="dollars_variable_set">
+                  <field name="VAR">num_of_dollars</field>
+                </block>
+                <block type="variables_get">
+                  <field name="VAR">num_of_pennies</field>
+                </block>
+                <block type="variables_get">
+                  <field name="VAR">num_of_nickels</field>
+                </block>
+                <block type="variables_get">
+                  <field name="VAR">num_of_quarters</field>
+                </block>
+                <block type="variables_get">
+                  <field name="VAR">num_of_dollars</field>
+                </block>
+              </category>-->
+              <category name="General Conversions" colour="230">
+                <block type="math_number_general"></block>
+                <block type="units_convert"></block>
+                <block type="units_remaining"></block>
+              </category>
+              <category name="Math" colour="#5C68A6">
+                <block type="math_number_round">
+                  <field name="OP">round</field>
+                  <value name="NUM">
+                    <shadow type="math_number_general">
+                      <field name="NUM">3.1</field>
+                    </shadow>
+                  </value>
+                </block>
+                <!--<block type="math_number">-->
+                <block type="math_number_general">
+                  <field name="NUM">0</field>
+                </block>
+                <!--<block type="math_single">
+                  <field name="OP">ROOT</field>
+                  <value name="NUM">
+                    <shadow type="math_number">
+                      <field name="NUM">9</field>
+                    </shadow>
+                  </value>
+                </block>
+                <block type="math_trig">
+                  <field name="OP">SIN</field>
+                  <value name="NUM">
+                    <shadow type="math_number">
+                      <field name="NUM">45</field>
+                    </shadow>
+                  </value>
+                </block>
+                <block type="math_constant">
+                  <field name="CONSTANT">PI</field>
+                </block>-->
+                <block type="math_number_property_single">
+                  <value name="NUMBER_TO_CHECK">
+                    <block type="math_number_general">
+                      <field name="NUM">0</field>
+                    </block>
+                  </value>
+                </block>
+                <block type="math_number_property_divisible">
+                  <value name="NUMBER_TO_CHECK">
+                    <block type="math_number_general">
+                      <field name="NUM">0</field>
+                    </block>
+                  </value>
+                  <value name="DIVISOR">
+                    <block type="math_number_general">
+                      <field name="NUM">1</field>
+                    </block>
+                  </value>
+                </block>
+                <block type="math_number_word_arithmetic">
+                  <field name="OP">plus</field>
+                  <value name="A">
+                    <block type="math_number_general">
+                      <field name="NUM">1</field>
+                    </block>
+                  </value>
+                  <value name="B">
+                    <block type="math_number_general">
+                      <field name="NUM">1</field>
+                    </block>
+                  </value>
+                </block>
+                <block type="math_number_arithmetic">
+                  <field name="OP">+</field>
+                  <value name="A">
+                    <block type="math_number_general">
+                      <field name="NUM">1</field>
+                    </block>
+                  </value>
+                  <value name="B">
+                    <block type="math_number_general">
+                      <field name="NUM">1</field>
+                    </block>
+                  </value>
+                </block>
+                <!--
+                <block type="math_on_list">
+                  <mutation op="SUM"></mutation>
+                  <field name="OP">SUM</field>
+                </block>
+                -->
+                <!--<block type="math_modulo">
+                  <value name="DIVIDEND">
+                    <shadow type="math_number">
+                      <field name="NUM">64</field>
+                    </shadow>
+                  </value>
+                  <value name="DIVISOR">
+                    <shadow type="math_number">
+                      <field name="NUM">10</field>
+                    </shadow>
+                  </value>
+                </block>
+                <block type="math_constrain">
+                  <value name="VALUE">
+                    <shadow type="math_number">
+                      <field name="NUM">50</field>
+                    </shadow>
+                  </value>
+                  <value name="LOW">
+                    <shadow type="math_number">
+                      <field name="NUM">1</field>
+                    </shadow>
+                  </value>
+                  <value name="HIGH">
+                    <shadow type="math_number">
+                      <field name="NUM">100</field>
+                    </shadow>
+                  </value>
+                </block>
+                <block type="math_random_int">
+                  <value name="FROM">
+                    <shadow type="math_number">
+                      <field name="NUM">1</field>
+                    </shadow>
+                  </value>
+                  <value name="TO">
+                    <shadow type="math_number">
+                      <field name="NUM">100</field>
+                    </shadow>
+                  </value>
+                </block>
+                <block type="math_random_float"></block>-->
+              </category>
+              <category name="Text" colour="160">
+                <block type="text"></block>
+                <block type="string_concatenate"></block>
+                <block type="before_substring"></block>
+                <block type="after_substring"></block>
+                <block type="string_length"></block>
+                <block type="string_indexof_first"></block>
+                <block type="string_indexof_last"></block>
+                <block type="string_charat"></block>
+                <block type="string_getsubstring"></block>
+              </category>
+              <category name="Logic" colour="210">
+                <block type="logic_boolean_literal"></block>
+                <block type="logic_compare_values"></block>
+                <block type="logic_operation_general"></block>
+                <block type="logic_negate_value"></block>
+                <block type="controls_if_logic"></block>
+                <!--<block type="controls_if_if_logic"></block>
+                <block type="controls_if_elseif_logic"></block>
+                <block type="controls_if_else_logic"></block>-->
+              </category>
+              <category name="Loops" colour="120">
+                <block type="controls_repeat_times">
+                  <value name="TIMES">
+                    <block type="math_number_general">
+                      <field name="NUM">5</field>
+                    </block>
+                  </value>
+                </block>
+                <block type="controls_whileUntil_do">
+                  <value name="BOOL">
+                    <block type="logic_boolean_literal">
+                      <field name = "BOOL">false</field>
+                    </block>
+                  </value>
+                </block>
+              </category>
+              <category name = "Lists" colour = "260">
+                <block type="input_cell_range"></block>
+                <block type="variable_input_cell_range"></block>
+                <block type = "reduce_no_seed"></block>
+                <block type = "repeat_reduce"></block>
+              </category>
+              <category name="Function Definitions" colour="290">
+                <block type="function_getself"></block>
+                  <block type="class_def">
+                    <statement name="STACK">
+                      <block type="function_defzeroinputs" movable="false">
+                        <field name="NAME">method_name</field>
+                        <statement name="STACK">
+                          <block type="variables_set">
+                            <field name = "VAR">answer</field>
+                          </block>
+                        </statement>
+                      </block>
+                    </statement>
+                  </block>
+                <block type="class_def">
+                  <statement name="STACK">
+                    <block type="function_defoneinput" movable="false">
+                      <field name="NAME">method_name</field>
+                      <statement name="STACK">
+                        <block type="variables_set">
+                          <field name = "VAR">answer</field>
+                        </block>
+                      </statement>
+                    </block>
+                  </statement>
+                </block>
+                <block type="function_defzeroinputs">
+                    <statement name="STACK">
+                      <block type="variables_set">
+                          <field name = "VAR">answer</field>
+                      </block>
+                    </statement>
+                </block>
+                <block type="function_defoneinput">
+                    <statement name="STACK">
+                      <block type="variables_set">
+                          <field name = "VAR">answer</field>
+                      </block>
+                    </statement>
+                </block>
+              </category>
+              <category name="Function Calls" colour="290">
+              </category>
+              <!--<category name = "foo" custom="PROCEDURE"></category>-->
+              <!--<next><block type="function_defoneinput"></block></next>-->
+            </xml>
+        </div>
+        <button id = "convertToXMLButton">Convert XML to Blocks</button>
+        <div><button id = "convert-to-ruby-text-btn">Convert to Ruby Text2Code instructions</button></div>
+        <div id = "text-code">
+            <form>
+              <textarea disabled = "true" id = "text-code-box">Code to appear here.</textarea>
+              <textarea id = "xml_data" placeholder = "Copy text here to save/load blocks."></textarea>
+            </form>
+        </div>
+    </div>
+    <footer>
+        <h3><em>If you can describe the solution, you can code it. (At least that's the goal.)</em></h3>
+    </footer>
+    <div id = "repl" class = "repl-container-hide">
+      <div><span class = "tab-text tab-text-right">repl.it</span></div>
+      <!--<iframe src = "https://repl.it/GIWL" id = "repl-frame"></iframe>-->
+    </div>
+    <script src = "workspace1.js"></script>
+    <script src = "get_blocks.js"></script>
+    <script src = "run-code.js"></script>
+    <script src = "spreadsheet.js"></script>
+    <script src = "ruby-code-frame.js"></script>
+    <script src = "block-xml-conversion.js"></script>
+  </body>
+</html>

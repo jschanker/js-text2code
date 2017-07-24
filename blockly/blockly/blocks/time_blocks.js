@@ -498,14 +498,39 @@ Blockly.Blocks['reduce_no_seed'] = {
   }
 };
 
+Blockly.Blocks['repeat_reduce'] = {
+  init: function() {
+    this.appendValueInput("FUNC")
+        .setCheck("Function")
+        .appendField("repeatedly((resultSoFar, x) => ");
+    this.appendValueInput("LIST")
+        .appendField(").everyItemInList(")
+        .setCheck("Array");
+    this.appendDummyInput()
+        .appendField(").startingWith(")
+        .appendField(new Blockly.FieldVariable("first item"), "ACC");
+    //this.appendStatementInput("DO")
+    //    .setCheck(null);
+    this.appendDummyInput()
+        .appendField(");");
+    this.setInputsInline(true);
+    this.setOutput(true, null)
+    this.setColour(260);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+
 Blockly.Blocks['print_in_result_cell'] = {
   init: function() {
     this.appendValueInput("EXP")
         .setCheck(null)
-        .appendField("print");
+        .appendField("display(");
     this.appendValueInput("CELL")
         .setCheck("result_cell")
-        .appendField(".in result cell");
+        .appendField(").inResultCell(");
+    this.appendDummyInput()
+        .appendField(");");
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
@@ -527,10 +552,27 @@ Blockly.Blocks['result_cell_column'] = {
   }
 };
 
+/*
+Blockly.Blocks['prompt_for'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("promptFor(\"")
+        .appendField(new Blockly.FieldDropdown([["number","number"], ["text","text"]]), "TYPE")
+        .appendField("\").withMessage(\"")
+        .appendField(new Blockly.FieldTextInput("Enter number: "), "TEXT")
+        .appendField("\")");
+    this.setOutput(true, ["Number", "seconds","minutes","hours","days","pennies","nickels","quarters","dollars", "String"]);
+    this.setColour(160);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+*/
+
 Blockly.Blocks['prompt_for_number'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("prompt_for_number_with_message(\"")
+        .appendField("promptForNumberWithMessage(\"")
         .appendField(new Blockly.FieldTextInput("Enter number: "), "TEXT")
         .appendField("\")");
     this.setOutput(true, ["Number", "seconds","minutes","hours","days","pennies","nickels","quarters","dollars"]);
@@ -543,7 +585,7 @@ Blockly.Blocks['prompt_for_number'] = {
 Blockly.Blocks['prompt_for_text'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("prompt_for_text_with_message(\"")
+        .appendField("promptForTextWithMessage(\"")
         .appendField(new Blockly.FieldTextInput("Enter text: "), "TEXT")
         .appendField("\")");
     this.setOutput(true, "String");
@@ -552,6 +594,7 @@ Blockly.Blocks['prompt_for_text'] = {
     this.setHelpUrl('');
   }
 };
+
 
 Blockly.Blocks['units_convert'] = {
   init: function() {

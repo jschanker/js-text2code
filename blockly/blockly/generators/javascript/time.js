@@ -78,8 +78,36 @@ function display(msg) {
       else {
         window.alert(msg);
       }
+    },
+    inResultCell: function(cellStr) {
+      if(document.getElementById(cellStr)) {
+        document.getElementById(cellStr).innerText = msg;
+      } else {
+        window.alert(msg);
+      }
     }
   };
+}
+/*
+function promptFor(inputType) {
+  return {
+    withMessage: function(msg) {
+      if(inputType === "number") {
+        return parseFloat(window.prompt(msg,""));
+      } else {
+        return window.prompt(msg,"")
+      }
+    }
+  };
+}
+*/
+
+function promptForTextWithMessage(msg) {
+  return window.prompt(msg,"");
+}
+
+function promptForNumberWithMessage(msg) {
+  return parseFloat(promptForTextWithMessage(msg));
 }
 
 var NUM_OF_SECONDS_IN_MINUTES = 60;
@@ -363,14 +391,8 @@ Blockly.JavaScript['print_in_result_cell'] = function(block) {
   var value_exp = Blockly.JavaScript.valueToCode(block, 'EXP', Blockly.JavaScript.ORDER_ATOMIC);
   var value_cell = Blockly.JavaScript.valueToCode(block, 'CELL', Blockly.JavaScript.ORDER_ATOMIC);
   // TODO: Assemble JavaScript into code variable.
-  var code;
-  if(document.getElementById(value_cell)) {
-    code = 'document.getElementById("' + value_cell + '").innerText = ' + value_exp + ';\n';
-  } else {
-    code = 'window.alert(' + value_exp + ');\n';
-  }
   
-  return code;
+  return 'display(' + value_exp + ').inResultCell(\"' + value_cell + '\");\n';
 };
 
 Blockly.JavaScript['result_cell_column'] = function(block) {
@@ -532,6 +554,7 @@ Blockly.JavaScript['reduce_no_seed'] = function(block) {
   return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
 
+/*
 Blockly.JavaScript['prompt_for_number'] = function(block) {
   var text_text = block.getFieldValue('TEXT');
   // TODO: Assemble JavaScript into code variable.
@@ -539,11 +562,33 @@ Blockly.JavaScript['prompt_for_number'] = function(block) {
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
+*/
+/*
+Blockly.JavaScript['prompt_for'] = function(block) {
+  var input_type = block.getFieldValue('TYPE');
+  var text_text = block.getFieldValue('TEXT');
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'promptFor("' + input_type + '").withMessage("' + text_text + '")';
+  //var code = 'window.prompt("' + text_text + '")';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+*/
+
+Blockly.JavaScript['prompt_for_number'] = function(block) {
+  var text_text = block.getFieldValue('TEXT');
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'promptForNumberWithMessage("' + text_text + '")';
+  //var code = 'window.prompt("' + text_text + '")';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
 
 Blockly.JavaScript['prompt_for_text'] = function(block) {
   var text_text = block.getFieldValue('TEXT');
   // TODO: Assemble JavaScript into code variable.
-  var code = 'window.prompt("' + text_text + '")';
+  var code = 'promptForTextWithMessage("' + text_text + '")';
+  //var code = 'window.prompt("' + text_text + '")';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
