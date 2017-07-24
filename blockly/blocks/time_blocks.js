@@ -415,7 +415,11 @@ Blockly.Blocks['units_print'] = {
   init: function() {
     this.appendValueInput("TEXT")
         .setCheck(null)
-        .appendField("print");
+        .appendField("display(");
+    this.appendDummyInput()
+        .appendField(").in(\"")
+        .appendField(new Blockly.FieldDropdown([["console", "console"], ["box", "box"]]), "TYPE")
+        .appendField("\");");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour(160);
@@ -976,7 +980,7 @@ Blockly.Blocks['math_number_word_arithmetic'] = {
    */
   init: function() {
     this.jsonInit({
-      "message0": "(%1).%2(%3)",
+      "message0": "%1 .%2(%3)",
       "args0": [
         {
           "type": "input_value",

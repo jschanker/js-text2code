@@ -69,6 +69,19 @@ function afterSubstring(str, substr) {
   return str.substring(str.indexOf(substr) + substr.length);
 }
 
+function display(msg) {
+  return {
+    in: function(displayType) {
+      if(displayType === "console") {
+        console.log(msg);
+      }
+      else {
+        window.alert(msg);
+      }
+    }
+  };
+}
+
 var NUM_OF_SECONDS_IN_MINUTES = 60;
 var NUM_OF_MINUTES_IN_HOUR = 60;
 var NUM_OF_HOURS_IN_DAY = 24;
@@ -342,7 +355,8 @@ Blockly.JavaScript['units_print'] = function(block) {
   var msg = Blockly.JavaScript.valueToCode(block, 'TEXT',
       Blockly.JavaScript.ORDER_NONE) || '\'\'';
   var msg = msg instanceof Unit ? msg + " " + msg._units : msg;
-  return 'window.alert(' + msg + ');\n';
+  var displayType = block.getFieldValue('TYPE');
+  return 'display(' + msg + ').in("' + displayType + '");\n';
 };
 
 Blockly.JavaScript['print_in_result_cell'] = function(block) {
@@ -1184,10 +1198,10 @@ Blockly.JavaScript['math_number_arithmetic'] = function(block) {
 Blockly.JavaScript['math_number_word_arithmetic'] = function(block) {
   // Basic arithmetic operators, and power.
   var OPERATORS = {
-    'plus': ['plus', Blockly.JavaScript.ORDER_ADDITION],
-    'minus': ['minus', Blockly.JavaScript.ORDER_SUBTRACTION],
-    'times': ['times', Blockly.JavaScript.ORDER_MULTIPLICATION],
-    'dividedBy': ['dividedBy', Blockly.JavaScript.ORDER_DIVISION],
+    'plus': ['plus', Blockly.JavaScript.ORDER_FUNCTION_CALL],
+    'minus': ['minus', Blockly.JavaScript.ORDER_FUNCTION_CALL],
+    'times': ['times', Blockly.JavaScript.ORDER_FUNCTION_CALL],
+    'dividedBy': ['dividedBy', Blockly.JavaScript.ORDER_FUNCTION_CALL],
     '**': [null, Blockly.JavaScript.ORDER_COMMA]  // Handle power separately.
   };
   var tuple = OPERATORS[block.getFieldValue('OP')];
@@ -1201,7 +1215,7 @@ Blockly.JavaScript['math_number_word_arithmetic'] = function(block) {
     code = 'Math.pow(' + argument0 + ', ' + argument1 + ')';
     return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
   }
-  code = "(" + argument0 + ")." + operator + "(" + argument1 + ")";
+  code = argument0 + " ." + operator + "(" + argument1 + ")";
   return [code, order];
 };
 
