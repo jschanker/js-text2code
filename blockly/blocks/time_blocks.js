@@ -1,3 +1,56 @@
+Blockly.Blocks['function_variables_set'] = {
+  init: function() {
+    this.appendValueInput("VALUE")
+        //.appendField(Blockly.Msg.VARIABLES_SET)
+        .appendField("let ")
+        .appendField(new Blockly.FieldVariable(Blockly.Msg.VARIABLES_DEFAULT_NAME), "VAR")
+        .appendField(" = ");
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setColour(Blockly.Blocks.variables.HUE);
+    this.setTooltip(Blockly.Msg.VARIABLES_SET_TOOLTIP);
+    this.setHelpUrl(Blockly.Msg.VARIABLES_SET_HELPURL);
+  },
+  onchange: function(event) {
+    var children = this.getChildren();
+    // also handle rename event
+    if(children.length === 0) {
+      // remove function calls with this variable name, if they exist
+    }
+    else {
+      var value = children[0];
+      if(value.type === "repeat_reduce_lambda") {
+        //console.log(value);
+        //console.log(this.getFieldValue("VAR"));
+        /*
+        //Blockly.Events.setGroup("Function Calls");
+        Blockly.Events.setGroup(event.group);
+        
+        var xml = goog.dom.createDom('xml');
+        var block = goog.dom.createDom('block');
+        block.setAttribute('type', this.defType_);
+        var xy = this.getRelativeToSurfaceXY();
+        var x = xy.x + Blockly.SNAP_RADIUS * (this.RTL ? -1 : 1);
+        var y = xy.y + Blockly.SNAP_RADIUS * 2;
+        block.setAttribute('x', x);
+        block.setAttribute('y', y);
+        //var mutation = this.mutationToDom();
+        //block.appendChild(mutation);
+        var field = goog.dom.createDom('field');
+        field.setAttribute('name', 'NAME');
+        field.appendChild(document.createTextNode(this.getFieldValue("VAR")));
+        block.appendChild(field);
+        xml.appendChild(block);
+        Blockly.Xml.domToWorkspace(xml, this.workspace);
+        
+        Blockly.Events.setGroup(false);
+        */
+        
+      }
+    }
+  }
+};
+
 Blockly.Blocks['seconds_number'] = {
   init: function() {
     this.appendDummyInput()
@@ -418,13 +471,45 @@ Blockly.Blocks['units_print'] = {
         .appendField("display(");
     this.appendDummyInput()
         .appendField(").in(\"")
-        .appendField(new Blockly.FieldDropdown([["console", "console"], ["box", "box"]]), "TYPE")
+        .appendField(new Blockly.FieldDropdown([["console", "console"], ["box", "box"], ["result cell", "result_cell"]], function(option) {
+            var hasResultCellInput = (option == 'result_cell');
+            this.sourceBlock_.updateShape_(hasResultCellInput);
+        }), "TYPE");
+    this.appendDummyInput("CLOSE")
         .appendField("\");");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
+    this.setInputsInline(true);
     this.setColour(160);
     this.setTooltip('');
     this.setHelpUrl('');
+  },
+  mutationToDom: function() {
+    var container = document.createElement('mutation');
+    var resultCellInput = (this.getFieldValue('TYPE') == 'result_cell');
+    container.setAttribute('result_cell_input', resultCellInput);
+    return container;
+  },
+  domToMutation: function(xmlElement) {
+    var hasResultCellInput = (xmlElement.getAttribute('result_cell_input') == 'true');
+    this.updateShape_(hasResultCellInput);  // Helper function for adding/removing 2nd input.
+  },
+  updateShape_: function(resultInput) {
+    // Add or remove a Value Input.
+    var inputExists = this.getInput('RESULT_CELL');
+    if (resultInput) {
+      if (!inputExists) {
+        //this.getInput("CONTEXT").removeField("CLOSE");
+        this.removeInput("CLOSE");
+        this.appendValueInput('RESULT_CELL')
+            .appendField(" ")
+            .setCheck('result_cell');
+        this.appendDummyInput("CLOSE")
+            .appendField("\");");
+      }
+    } else if (inputExists) {
+      this.removeInput('RESULT_CELL');
+    }
   }
 };
 
@@ -498,14 +583,77 @@ Blockly.Blocks['reduce_no_seed'] = {
   }
 };
 
+Blockly.Blocks['repeat_reduce'] = {
+  init: function() {
+    this.appendValueInput("FUNC")
+        .setCheck("Function")
+        //.appendField("repeatedly((resultSoFar, x) => ");
+        .appendField("repeatedly(");
+    this.appendValueInput("LIST")
+        .appendField(").everyItemInList(")
+        .setCheck("Array");
+    //this.appendDummyInput()
+    //    .appendField(").startingWith(")
+    //    .appendField(new Blockly.FieldVariable("first item"), "ACC");
+    //this.appendStatementInput("DO")
+    //    .setCheck(null);
+    this.appendDummyInput()
+        .appendField(");");
+    this.setInputsInline(true);
+    this.setOutput(true, null)
+    this.setColour(260);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+
+Blockly.Blocks['num_list'] = {
+  init: function() {
+    this.appendValueInput("First")
+        .appendField("[");
+    this.appendValueInput("Second")
+        .appendField(", ");
+    this.appendValueInput("Third")
+        .appendField(", ");
+    this.appendValueInput("Fourth")
+        .appendField(", ");
+    this.appendDummyInput()
+        .appendField("]");
+    this.setInputsInline(true);
+    this.setOutput(true, null)
+    this.setColour(260);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+
+Blockly.Blocks['repeat_reduce_lambda'] = {
+  init: function() {
+    this.appendValueInput("RET")
+        .setCheck(null)
+        .appendField("(")
+        .appendField(new Blockly.FieldVariable("resultSoFar"), "ACC")
+        .appendField(", ")
+        .appendField(new Blockly.FieldVariable("item"), "ITEM")
+        .appendField(") => ");
+    this.setInputsInline(true);
+    this.setOutput(true, "Function");
+    this.setColour(260);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+
 Blockly.Blocks['print_in_result_cell'] = {
   init: function() {
     this.appendValueInput("EXP")
         .setCheck(null)
-        .appendField("print");
+        .appendField("display(");
     this.appendValueInput("CELL")
         .setCheck("result_cell")
-        .appendField(".in result cell");
+        .appendField(").inResultCell(\"");
+    this.appendDummyInput()
+        .appendField("\");");
     this.setInputsInline(true);
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
@@ -527,10 +675,40 @@ Blockly.Blocks['result_cell_column'] = {
   }
 };
 
+/*
+Blockly.Blocks['prompt_for'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("promptFor(\"")
+        .appendField(new Blockly.FieldDropdown([["number","number"], ["text","text"]]), "TYPE")
+        .appendField("\").withMessage(\"")
+        .appendField(new Blockly.FieldTextInput("Enter number: "), "TEXT")
+        .appendField("\")");
+    this.setOutput(true, ["Number", "seconds","minutes","hours","days","pennies","nickels","quarters","dollars", "String"]);
+    this.setColour(160);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+*/
+
+Blockly.Blocks['convert_to_number'] = {
+  init: function() {
+    this.appendValueInput("STR")
+        .setCheck("String");
+    this.appendDummyInput()
+        .appendField(".toNumber()");
+    this.setOutput(true, ["Number", "seconds","minutes","hours","days","pennies","nickels","quarters","dollars"]);
+    this.setColour(160);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+
 Blockly.Blocks['prompt_for_number'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("prompt_for_number_with_message(\"")
+        .appendField("promptForNumberWithMessage(\"")
         .appendField(new Blockly.FieldTextInput("Enter number: "), "TEXT")
         .appendField("\")");
     this.setOutput(true, ["Number", "seconds","minutes","hours","days","pennies","nickels","quarters","dollars"]);
@@ -543,7 +721,7 @@ Blockly.Blocks['prompt_for_number'] = {
 Blockly.Blocks['prompt_for_text'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField("prompt_for_text_with_message(\"")
+        .appendField("promptForTextWithMessage(\"")
         .appendField(new Blockly.FieldTextInput("Enter text: "), "TEXT")
         .appendField("\")");
     this.setOutput(true, "String");
@@ -552,6 +730,7 @@ Blockly.Blocks['prompt_for_text'] = {
     this.setHelpUrl('');
   }
 };
+
 
 Blockly.Blocks['units_convert'] = {
   init: function() {
@@ -847,7 +1026,7 @@ Blockly.Blocks['string_concatenate'] = {
    */
   init: function() {
     this.jsonInit({
-      "message0": "%1 + %2",
+      "message0": "%1.plus(%2)",
       "args0": [
         {
           "type": "input_value",
@@ -995,7 +1174,7 @@ Blockly.Blocks['math_number_word_arithmetic'] = {
              ['minus', 'minus'],
              ['times', 'times'],
              ['dividedBy', 'dividedBy'],
-             [Blockly.Msg.MATH_POWER_SYMBOL, '**']]
+             ['raisedToThe', 'raisedToThe']]
         },
         {
           "type": "input_value",
