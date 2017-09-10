@@ -73,6 +73,15 @@ function afterSubstring(str, substr) {
   return str.substring(str.indexOf(substr) + substr.length);
 }
 
+function quotientOf(dividend) {
+  return {
+    dividedBy: function(divisor) {
+      var division = dividend / divisor;
+      return (division > 0) ? Math.floor(division) : Math.ceil(division);
+    }
+  }
+}
+
 function remainderOf(dividend) {
   return {
     dividedBy: function(divisor) {
@@ -1029,6 +1038,17 @@ Blockly.JavaScript['math_number_property_divisible'] = function(block) {
   code = number_to_check + ' % ' + divisor + ' == 0';
 
   return [code, Blockly.JavaScript.ORDER_EQUALITY];
+};
+
+Blockly.JavaScript['quotient'] = function(block) {
+  var dividend = Blockly.JavaScript.valueToCode(block, 'A',
+      Blockly.JavaScript.ORDER_MODULUS) || '0';
+  var code;
+  var divisor = Blockly.JavaScript.valueToCode(block, 'B',
+                Blockly.JavaScript.ORDER_MODULUS) || '0';
+  code = 'quotientOf(' + dividend + ').dividedBy(' + divisor + ')';
+
+  return [code, Blockly.JavaScript.ORDER_FUNCTION];
 };
 
 Blockly.JavaScript['remainder'] = function(block) {
