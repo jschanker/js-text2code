@@ -1203,7 +1203,22 @@ Blockly.Blocks['math_number_word_arithmetic'] = {
   }
 };
 
-
+Blockly.Blocks['remainder'] = {
+  init: function() {
+    this.appendValueInput("A")
+        .appendField("remainderOf(")
+        .setCheck("Number");
+    this.appendValueInput("B")
+        .appendField(").dividedBy(")
+        .setCheck("Number");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setOutput(true, "Number");
+    this.setColour(Blockly.Blocks.math.HUE);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
 
 Blockly.Blocks['math_number_arithmetic'] = {
   /**
