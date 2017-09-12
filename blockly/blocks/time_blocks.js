@@ -104,7 +104,7 @@ Blockly.Blocks['seconds_to_minutes'] = {
     this.appendValueInput("SECONDS")
         .setCheck("seconds")
     this.appendDummyInput()
-        .appendField(".seconds.to_minutes");
+        .appendField(".seconds().toMinutes()");
     this.setOutput(true, "minutes");
     this.setColour(200);
     this.setTooltip('');
@@ -117,7 +117,7 @@ Blockly.Blocks['minutes_to_hours'] = {
     this.appendValueInput("MINUTES")
         .setCheck("minutes")
     this.appendDummyInput()
-        .appendField(".minutes.to_hours");
+        .appendField(".minutes().toHours()");
     this.setOutput(true, "hours");
     this.setColour(200);
     this.setTooltip('');
@@ -130,7 +130,7 @@ Blockly.Blocks['hours_to_days'] = {
     this.appendValueInput("HOURS")
         .setCheck("hours")
     this.appendDummyInput()
-        .appendField(".hours.to_days");
+        .appendField(".hours().toDays()");
     this.setOutput(true, "days");
     this.setColour(200);
     this.setTooltip('');
@@ -143,7 +143,7 @@ Blockly.Blocks['remaining_seconds'] = {
     this.appendValueInput("SECONDS")
         .setCheck("seconds")
     this.appendDummyInput()
-        .appendField(".seconds.remaining_after_removal_of_minutes");
+        .appendField(".seconds().remainingAfterMinutesRemoved()");
     this.setOutput(true, "seconds");
     this.setColour(200);
     this.setTooltip('');
@@ -156,7 +156,7 @@ Blockly.Blocks['remaining_minutes'] = {
     this.appendValueInput("MINUTES")
         .setCheck("minutes")
     this.appendDummyInput()
-        .appendField(".minutes.remaining_after_removal_of_hours");
+        .appendField(".minutes().remainingAfterHoursRemoved()");
     this.setOutput(true, "minutes");
     this.setColour(200);
     this.setTooltip('');
@@ -169,7 +169,7 @@ Blockly.Blocks['remaining_hours'] = {
     this.appendValueInput("HOURS")
         .setCheck("hours")
     this.appendDummyInput()
-        .appendField(".hours.remaining_after_removal_of_days");
+        .appendField(".hours().remainingAfterDaysRemoved()");
     this.setOutput(true, "hours");
     this.setColour(200);
     this.setTooltip('');
@@ -312,7 +312,7 @@ Blockly.Blocks['pennies_to_nickels'] = {
     this.appendValueInput("PENNIES")
         .setCheck("pennies")
     this.appendDummyInput()
-        .appendField(".pennies.to_nickels");
+        .appendField(".pennies().toNickels()");
     this.setOutput(true, "nickels");
     this.setColour(120);
     this.setTooltip('');
@@ -325,7 +325,7 @@ Blockly.Blocks['nickels_to_quarters'] = {
     this.appendValueInput("NICKELS")
         .setCheck("nickels")
     this.appendDummyInput()
-        .appendField(".nickels.to_quarters");
+        .appendField(".nickels().toQuarters()");
     this.setOutput(true, "quarters");
     this.setColour(120);
     this.setTooltip('');
@@ -338,7 +338,7 @@ Blockly.Blocks['quarters_to_dollars'] = {
     this.appendValueInput("QUARTERS")
         .setCheck("quarters")
     this.appendDummyInput()
-        .appendField(".quarters.to_dollars");
+        .appendField(".quarters().toDollars()");
     this.setOutput(true, "dollars");
     this.setColour(120);
     this.setTooltip('');
@@ -351,7 +351,7 @@ Blockly.Blocks['remaining_pennies'] = {
     this.appendValueInput("PENNIES")
         .setCheck("pennies")
     this.appendDummyInput()
-        .appendField(".pennies.remaining_after_removal_of_nickels");
+        .appendField(".pennies().remainingAfterNickelsRemoved()");
     this.setOutput(true, "pennies");
     this.setColour(120);
     this.setTooltip('');
@@ -364,7 +364,7 @@ Blockly.Blocks['remaining_nickels'] = {
     this.appendValueInput("NICKELS")
         .setCheck("nickels")
     this.appendDummyInput()
-        .appendField(".nickels.remaining_after_removal_of_quarters");
+        .appendField(".nickels().remainingAfterQuartersRemoved()");
     this.setOutput(true, "nickels");
     this.setColour(120);
     this.setTooltip('');
@@ -377,7 +377,7 @@ Blockly.Blocks['remaining_quarters'] = {
     this.appendValueInput("QUARTERS")
         .setCheck("quarters")
     this.appendDummyInput()
-        .appendField(".quarters.remaining_after_removal_of_dollars");
+        .appendField(".quarters().remainingAfterDollarsRemoved()");
     this.setOutput(true, "quarters");
     this.setColour(120);
     this.setTooltip('');

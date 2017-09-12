@@ -4,6 +4,72 @@ Number.prototype.minus = function(y) { return this - y;};
 Number.prototype.dividedBy = function(y) { return this / y;};
 Number.prototype.raisedToThe = function(y) { return Math.pow(this, y);};
 
+/*
+Number.prototype.pennies = {
+  toNickels: function() {
+    return convert("pennies", "nickels", NUM_OF_PENNIES_IN_NICKEL, this);
+  },
+  remainingAfterRemovalOfNickels: function() {
+    return getRemainingAfterConvert("pennies", "nickels", NUM_OF_PENNIES_IN_NICKEL, this);
+  }
+};
+
+Number.prototype.nickels = {
+  toQuarters: function() {
+    return convert("nickels", "quarters", NUM_OF_NICKELS_IN_QUARTER, this);
+  },
+  remainingAfterRemovalOfQuarters: function() {
+    return getRemainingAfterConvert("nickels", "quarters", NUM_OF_NICKELS_IN_QUARTER, this);
+  }
+};
+
+Number.prototype.quarters = {
+  toDollars: function() {
+    return convert("quarters", "dollars", NUM_OF_QUARTERS_IN_DOLLAR, this);
+  },
+  remainingAfterRemovalOfDollars: function() {
+    return getRemainingAfterConvert("quarters", "dollars", NUM_OF_QUARTERS_IN_DOLLAR, this);
+  }
+};
+
+Number.prototype.seconds = {
+  toMinutes: function() {
+    alert(this);
+    return convert("seconds", "minutes", NUM_OF_SECONDS_IN_MINUTES, this);
+  },
+  remainingAfterRemovalOfMinutes: function() {
+    return getRemainingAfterConvert("seconds", "minutes", NUM_OF_SECONDS_IN_MINUTES, this);
+  }
+};
+
+Number.prototype.minutes = {
+  toHours: function() {
+    return convert("minutes", "hours", NUM_OF_MINUTES_IN_HOUR, this);
+  },
+  remainingAfterRemovalOfHours: function() {
+    return getRemainingAfterConvert("minutes", "hours", NUM_OF_MINUTES_IN_HOUR, this);
+  }
+};
+
+Number.prototype.hours = {
+  toDays: function() {
+    return convert("hours", "days", NUM_OF_HOURS_IN_DAY, this);
+  },
+  remainingAfterRemovalOfDays: function() {
+    return getRemainingAfterConvert("hours", "days", NUM_OF_HOURS_IN_DAY, this);
+  }
+};
+*/
+
+
+Number.prototype.pennies  = function() { return new Unit(this, "pennies") };
+Number.prototype.nickels  = function() { return new Unit(this, "nickels") };
+Number.prototype.quarters = function() { return new Unit(this, "quarters") };
+Number.prototype.seconds  = function() { return new Unit(this, "seconds") };
+Number.prototype.minutes  = function() { return new Unit(this, "minutes") };
+Number.prototype.hours    = function() { return new Unit(this, "hours") };
+
+
 String.prototype.plus = function(y) { return this + y;};
 String.prototype.toNumber = function() { return parseFloat(this); };
 
@@ -20,10 +86,19 @@ Unit.prototype.toInteger = function() {
   return Math.floor(this._quantity || 0);
 };
 
+Unit.prototype.convert = function(fromType, toType, conversionFactor) {
+  return convert(fromType, toType, conversionFactor, this);
+};
+
+Unit.prototype.getRemainingAfterConvert = function(fromType, toType, conversionFactor) {
+  return getRemainingAfterConvert(fromType, toType, conversionFactor, this);
+}
+
 function setToUnits(units, toType) {
   //alert(units._type);
   if(units instanceof Unit && toType != units._type) {
     alert("Error: Attempting to set variable to value in " + toType + " but its value has actual type " + units._type + " instead.");
+    throw new Error("Mismatched types in conversion.");
   } else {
     return units instanceof Unit ? units : new Unit(units, toType);
   }
@@ -147,6 +222,7 @@ var NUM_OF_PENNIES_IN_NICKEL = 5;
 var NUM_OF_NICKELS_IN_QUARTER = 5;
 var NUM_OF_QUARTERS_IN_DOLLAR = 4;
 
+/*
 var seconds_to_minutes = convert.bind(null, "seconds", "minutes", NUM_OF_SECONDS_IN_MINUTES);
 var minutes_to_hours = convert.bind(null, "minutes", "hours", NUM_OF_MINUTES_IN_HOUR);
 var hours_to_days = convert.bind(null, "hours", "days", NUM_OF_HOURS_IN_DAY);
@@ -160,6 +236,28 @@ var quarters_to_dollars = convert.bind(null, "quarters", "dollars", NUM_OF_QUART
 var remaining_pennies_after_nickels_removed = getRemainingAfterConvert.bind(null, "pennies", "nickels", NUM_OF_PENNIES_IN_NICKEL);
 var remaining_nickels_after_quarters_removed = getRemainingAfterConvert.bind(null, "nickels", "quarters", NUM_OF_NICKELS_IN_QUARTER);
 var remaining_quarters_after_dollars_removed = getRemainingAfterConvert.bind(null, "quarters", "dollars", NUM_OF_QUARTERS_IN_DOLLAR);
+*/
+
+Unit.prototype.pennies  = function() { return setToUnits(this, "pennies") };
+Unit.prototype.nickels  = function() { return setToUnits(this, "nickels") };
+Unit.prototype.quarters = function() { return setToUnits(this, "quarters") };
+Unit.prototype.seconds  = function() { return setToUnits(this, "seconds") };
+Unit.prototype.minutes  = function() { return setToUnits(this, "minutes") };
+Unit.prototype.hours    = function() { return setToUnits(this, "hours") };
+
+Unit.prototype.toMinutes = function() { return this.convert("seconds", "minutes", NUM_OF_SECONDS_IN_MINUTES); };
+Unit.prototype.toHours   = function() { return this.convert("minutes", "hours", NUM_OF_MINUTES_IN_HOUR); };
+Unit.prototype.toDays    = function() { return this.convert("hours", "days", NUM_OF_HOURS_IN_DAY); };
+Unit.prototype.remainingAfterMinutesRemoved = function() { return this.getRemainingAfterConvert("seconds", "minutes", NUM_OF_SECONDS_IN_MINUTES); };
+Unit.prototype.remainingAfterHoursRemoved   = function() { return this.getRemainingAfterConvert("minutes", "hours", NUM_OF_MINUTES_IN_HOUR); };
+Unit.prototype.remainingAfterDaysRemoved    = function() { return this.getRemainingAfterConvert("hours", "days", NUM_OF_HOURS_IN_DAY); };
+
+Unit.prototype.toNickels  = function() { return this.convert("pennies", "nickels", NUM_OF_PENNIES_IN_NICKEL); };
+Unit.prototype.toQuarters = function() { return this.convert("nickels", "quarters", NUM_OF_NICKELS_IN_QUARTER); };
+Unit.prototype.toDollars =  function() { return this.convert("quarters", "dollars", NUM_OF_QUARTERS_IN_DOLLAR); };
+Unit.prototype.remainingAfterNickelsRemoved  = function() { return this.getRemainingAfterConvert("pennies", "nickels", NUM_OF_PENNIES_IN_NICKEL); };
+Unit.prototype.remainingAfterQuartersRemoved = function() { return this.getRemainingAfterConvert("nickels", "quarters", NUM_OF_NICKELS_IN_QUARTER); };
+Unit.prototype.remainingAfterDollarsRemoved  = function() { return this.getRemainingAfterConvert("quarters", "dollars", NUM_OF_QUARTERS_IN_DOLLAR); };
 
 Blockly.JavaScript['seconds_number'] = function(block) {
   var number_num = block.getFieldValue('NUM') || 0;
@@ -196,7 +294,7 @@ Blockly.JavaScript['days_number'] = function(block) {
 Blockly.JavaScript['seconds_to_minutes'] = function(block) {
   var value_seconds = Blockly.JavaScript.valueToCode(block, 'SECONDS', Blockly.JavaScript.ORDER_ATOMIC) || 0;
   // TODO: Assemble JavaScript into code variable.
-  var code = 'seconds_to_minutes(' + value_seconds + ')';
+  var code = value_seconds + ' .seconds().toMinutes()';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
@@ -204,7 +302,7 @@ Blockly.JavaScript['seconds_to_minutes'] = function(block) {
 Blockly.JavaScript['minutes_to_hours'] = function(block) {
   var value_minutes = Blockly.JavaScript.valueToCode(block, 'MINUTES', Blockly.JavaScript.ORDER_ATOMIC) || 0;
   // TODO: Assemble JavaScript into code variable.
-  var code = 'minutes_to_hours(' + value_minutes + ')';
+  var code = value_minutes + ' .minutes().toHours()';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
@@ -212,7 +310,7 @@ Blockly.JavaScript['minutes_to_hours'] = function(block) {
 Blockly.JavaScript['hours_to_days'] = function(block) {
   var value_hours = Blockly.JavaScript.valueToCode(block, 'HOURS', Blockly.JavaScript.ORDER_ATOMIC) || 0;
   // TODO: Assemble JavaScript into code variable.
-  var code = 'hours_to_days(' + value_hours + ')';
+  var code = value_hours + ' .hours().toDays()';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
@@ -220,7 +318,7 @@ Blockly.JavaScript['hours_to_days'] = function(block) {
 Blockly.JavaScript['remaining_seconds'] = function(block) {
   var value_seconds = Blockly.JavaScript.valueToCode(block, 'SECONDS', Blockly.JavaScript.ORDER_ATOMIC) || 0;
   // TODO: Assemble JavaScript into code variable.
-  var code = 'remaining_seconds_after_minutes_removed(' + value_seconds + ')';
+  var code = value_seconds + ' .seconds().remainingAfterMinutesRemoved()';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
@@ -228,7 +326,7 @@ Blockly.JavaScript['remaining_seconds'] = function(block) {
 Blockly.JavaScript['remaining_minutes'] = function(block) {
   var value_minutes = Blockly.JavaScript.valueToCode(block, 'MINUTES', Blockly.JavaScript.ORDER_ATOMIC) || 0;
   // TODO: Assemble JavaScript into code variable.
-  var code = 'remaining_minutes_after_hours_removed(' + value_minutes + ')';
+  var code = value_minutes + ' .minutes().remainingAfterHoursRemoved()';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
@@ -236,7 +334,7 @@ Blockly.JavaScript['remaining_minutes'] = function(block) {
 Blockly.JavaScript['remaining_hours'] = function(block) {
   var value_hours = Blockly.JavaScript.valueToCode(block, 'HOURS', Blockly.JavaScript.ORDER_ATOMIC) || 0;
   // TODO: Assemble JavaScript into code variable.
-  var code = 'remaining_hours_after_days_removed(' + value_hours + ')';
+  var code = value_hours + ' .hours().remainingAfterDaysRemoved()';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
@@ -320,7 +418,7 @@ Blockly.JavaScript['dollars_number'] = function(block) {
 Blockly.JavaScript['pennies_to_nickels'] = function(block) {
   var value_pennies = Blockly.JavaScript.valueToCode(block, 'PENNIES', Blockly.JavaScript.ORDER_ATOMIC) || 0;
   // TODO: Assemble JavaScript into code variable.
-  var code = 'pennies_to_nickels(' + value_pennies + ')';
+  var code = value_pennies + ' .pennies().toNickels()';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
@@ -328,7 +426,7 @@ Blockly.JavaScript['pennies_to_nickels'] = function(block) {
 Blockly.JavaScript['nickels_to_quarters'] = function(block) {
   var value_nickels = Blockly.JavaScript.valueToCode(block, 'NICKELS', Blockly.JavaScript.ORDER_ATOMIC) || 0;
   // TODO: Assemble JavaScript into code variable.
-  var code = 'nickels_to_quarters(' + value_nickels + ')';
+  var code = value_nickels + ' .nickels().toQuarters()';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
@@ -336,7 +434,7 @@ Blockly.JavaScript['nickels_to_quarters'] = function(block) {
 Blockly.JavaScript['quarters_to_dollars'] = function(block) {
   var value_quarters = Blockly.JavaScript.valueToCode(block, 'QUARTERS', Blockly.JavaScript.ORDER_ATOMIC) || 0;
   // TODO: Assemble JavaScript into code variable.
-  var code = 'quarters_to_dollars(' + value_quarters + ')';
+  var code = value_quarters + ' .quarters().toDollars()';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
@@ -344,7 +442,7 @@ Blockly.JavaScript['quarters_to_dollars'] = function(block) {
 Blockly.JavaScript['remaining_pennies'] = function(block) {
   var value_pennies = Blockly.JavaScript.valueToCode(block, 'PENNIES', Blockly.JavaScript.ORDER_ATOMIC) || 0;
   // TODO: Assemble JavaScript into code variable.
-  var code = 'remaining_pennies_after_nickels_removed(' + value_pennies + ')';
+  var code = value_pennies + ' .pennies().remainingAfterNickelsRemoved()';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
@@ -352,7 +450,7 @@ Blockly.JavaScript['remaining_pennies'] = function(block) {
 Blockly.JavaScript['remaining_nickels'] = function(block) {
   var value_nickels = Blockly.JavaScript.valueToCode(block, 'NICKELS', Blockly.JavaScript.ORDER_ATOMIC) || 0;
   // TODO: Assemble JavaScript into code variable.
-  var code = 'remaining_nickels_after_quarters_removed(' + value_nickels + ')';
+  var code = value_nickels + ' .nickels().remainingAfterQuartersRemoved()';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
@@ -360,7 +458,7 @@ Blockly.JavaScript['remaining_nickels'] = function(block) {
 Blockly.JavaScript['remaining_quarters'] = function(block) {
   var value_quarters = Blockly.JavaScript.valueToCode(block, 'QUARTERS', Blockly.JavaScript.ORDER_ATOMIC) || 0;
   // TODO: Assemble JavaScript into code variable.
-  var code = 'remaining_quarters_after_dollars_removed(' + value_quarters + ')';
+  var code = value_quarters + ' .quarters().remainingAfterDollarsRemoved()';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
