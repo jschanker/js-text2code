@@ -72,6 +72,19 @@ Number.prototype.hours    = function() { return new Unit(this, "hours") };
 
 String.prototype.plus = function(y) { return this + y;};
 String.prototype.toNumber = function() { return parseFloat(this); };
+String.prototype.getBeforeText = function(substr) { return beforeSubstring(this, substr); };
+String.prototype.getAfterText = function(substr) { return afterSubstring(this, substr); };
+String.prototype.findFirstOccurrenceOfText = function(substr) { return this.indexOf(substr) + 1; };
+String.prototype.findLastOccurrenceOfText = function(substr) { return this.lastIndexOf(substr) + 1; };
+String.prototype.getCharacterNumber = function(position) { return this.charAt(position-1); };
+String.prototype.getTextFromNumber = function(startPos) {
+  var that = this;
+  return {
+    toNumber: function(endPos) {
+      return that.substring(startPos-1,endPos);
+    }
+  }; 
+};
 
 function Unit(quantity, type) {
   this._quantity = quantity || 0;
@@ -764,7 +777,7 @@ Blockly.JavaScript['before_substring'] = function(block) {
   var value_text = Blockly.JavaScript.valueToCode(block, 'TEXT', Blockly.JavaScript.ORDER_ATOMIC) || '\'\'';
   var value_sub = Blockly.JavaScript.valueToCode(block, 'SUB', Blockly.JavaScript.ORDER_ATOMIC) || '\'\'';
   // TODO: Assemble JavaScript into code variable.
-  var code = 'beforeSubstring(' + value_text + ',' + value_sub + ')';
+  var code = value_text + '.getBeforeText(' + value_sub + ')';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
@@ -773,7 +786,7 @@ Blockly.JavaScript['after_substring'] = function(block) {
   var value_text = Blockly.JavaScript.valueToCode(block, 'TEXT', Blockly.JavaScript.ORDER_ATOMIC) || '\'\'';
   var value_sub = Blockly.JavaScript.valueToCode(block, 'SUB', Blockly.JavaScript.ORDER_ATOMIC) || '\'\'';
   // TODO: Assemble JavaScript into code variable.
-  var code = 'afterSubstring(' + value_text + ',' + value_sub + ')';
+  var code = value_text + '.getAfterText(' + value_sub + ')';
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
@@ -784,15 +797,15 @@ Blockly.JavaScript['string_charat'] = function(block) {
   /*var where = block.getFieldValue('WHERE') || 'FROM_START';*/
   var textOrder = Blockly.JavaScript.ORDER_MEMBER;
   var text = Blockly.JavaScript.valueToCode(block, 'VALUE', textOrder) || '\'\'';
-  var at = Blockly.JavaScript.getAdjusted(block, 'AT');
+  var at = Blockly.JavaScript.valueToCode(block, 'AT');
 
-  var code = text + '.charAt(' + at + ')';
+  var code = text + '.getCharacterNumber(' + at + ')';
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
 
 Blockly.JavaScript['string_indexof_first'] = function(block) {
   // Search the text for a substring.
-  var operator = 'indexOf';
+  var operator = 'findFirstOccurrenceOfText';
   var substring = Blockly.JavaScript.valueToCode(block, 'FIND',
       Blockly.JavaScript.ORDER_NONE) || '\'\'';
   var text = Blockly.JavaScript.valueToCode(block, 'VALUE',
@@ -800,14 +813,14 @@ Blockly.JavaScript['string_indexof_first'] = function(block) {
   var code = text + '.' + operator + '(' + substring + ')';
   // Adjust index if using one-based indices.
   if (block.workspace.options.oneBasedIndex) {
-    return [code + ' + 1', Blockly.JavaScript.ORDER_ADDITION];
+    return [code, Blockly.JavaScript.ORDER_ADDITION];
   }
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
 
 Blockly.JavaScript['string_indexof_last'] = function(block) {
   // Search the text for a substring.
-  var operator = 'lastIndexOf';
+  var operator = 'findLastOccurrenceOfText';
   var substring = Blockly.JavaScript.valueToCode(block, 'FIND',
       Blockly.JavaScript.ORDER_NONE) || '\'\'';
   var text = Blockly.JavaScript.valueToCode(block, 'VALUE',
@@ -815,7 +828,7 @@ Blockly.JavaScript['string_indexof_last'] = function(block) {
   var code = text + '.' + operator + '(' + substring + ')';
   // Adjust index if using one-based indices.
   if (block.workspace.options.oneBasedIndex) {
-    return [code + ' + 1', Blockly.JavaScript.ORDER_ADDITION];
+    return [code, Blockly.JavaScript.ORDER_ADDITION];
   }
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
@@ -824,10 +837,10 @@ Blockly.JavaScript['string_getsubstring'] = function(block) {
   // Get substring.
   var text = Blockly.JavaScript.valueToCode(block, 'STRING',
       Blockly.JavaScript.ORDER_FUNCTION_CALL) || '\'\'';
-  var at1 = Blockly.JavaScript.getAdjusted(block, 'AT1');
-  var at2 = Blockly.JavaScript.getAdjusted(block, 'AT2', 1); //|| "(" + text + ").length";
+  var at1 = Blockly.JavaScript.valueToCode(block, 'AT1');
+  var at2 = Blockly.JavaScript.valueToCode(block, 'AT2'); //|| "(" + text + ").length";
   
-  code = text + '.slice(' + at1 + ', ' + at2 + ')';
+  code = text + '.getTextFromNumber(' + at1 + ').toNumber(' + at2 + ')';
 
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };

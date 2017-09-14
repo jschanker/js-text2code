@@ -771,7 +771,7 @@ Blockly.Blocks['before_substring'] = {
         //.appendField("from_text(");
     this.appendValueInput("SUB")
         .setCheck("String")
-        .appendField(".get_before_text(");
+        .appendField(".getBeforeText(");
     this.appendDummyInput()
         .appendField(")");
     this.setInputsInline(true);
@@ -789,7 +789,7 @@ Blockly.Blocks['after_substring'] = {
         //.appendField("from_text(");
     this.appendValueInput("SUB")
         .setCheck("String")
-        .appendField(".get_after_text(");
+        .appendField(".getAfterText(");
     this.appendDummyInput()
         .appendField(")");
     this.setInputsInline(true);
@@ -1076,7 +1076,7 @@ Blockly.Blocks['string_indexof_first'] = {
         .setCheck("String");
     this.appendValueInput("FIND")
         .setCheck("String")
-        .appendField(".find_first_occurrence_of_text(");
+        .appendField(".findFirstOccurrenceOfText(");
     this.appendDummyInput()
         .appendField(")");
     this.setInputsInline(true);
@@ -1093,7 +1093,7 @@ Blockly.Blocks['string_indexof_last'] = {
         .setCheck("String");
     this.appendValueInput("FIND")
         .setCheck("String")
-        .appendField(".find_last_occurrence_of_text(");
+        .appendField(".findLastOccurrenceOfText(");
     this.appendDummyInput()
         .appendField(")");
     this.setInputsInline(true);
@@ -1110,7 +1110,7 @@ Blockly.Blocks['string_charat'] = {
         .setCheck("String");
     this.appendValueInput("AT")
         .setCheck("Number")
-        .appendField(".get_character_number(");
+        .appendField(".getCharacterNumber(");
     this.appendDummyInput()
         .appendField(")");
     this.setInputsInline(true);
@@ -1127,10 +1127,10 @@ Blockly.Blocks['string_getsubstring'] = {
         .setCheck("String");
     this.appendValueInput("AT1")
         .setCheck("Number")
-        .appendField(".get_text_from_number(");
+        .appendField(".getTextFromNumber(");
     this.appendValueInput("AT2")
         .setCheck("Number")
-        .appendField(").to_number(");
+        .appendField(").toNumber(");
     this.appendDummyInput()
         .appendField(")");
     this.setInputsInline(true);
