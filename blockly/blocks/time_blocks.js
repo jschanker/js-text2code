@@ -1418,6 +1418,8 @@ Blockly.Blocks['logic_boolean_literal'] = {
   }
 };
 
+Blockly.Msg.LOGIC_NEGATE_TITLE = "not(%1)";
+
 Blockly.Blocks['logic_negate_value'] = {
   /**
    * Block for negation.
@@ -1457,7 +1459,11 @@ Blockly.Blocks['logic_operation_general'] = {
         .setCheck('Boolean');
     this.appendValueInput('B')
         .setCheck('Boolean')
-        .appendField(new Blockly.FieldDropdown(OPERATORS), 'OP');
+        .appendField(".")
+        .appendField(new Blockly.FieldDropdown(OPERATORS), 'OP')
+        .appendField("(");
+    this.appendDummyInput()
+        .appendField(")");
     this.setInputsInline(true);
     // Assign 'this' to a variable for use in the tooltip closure below.
     var thisBlock = this;

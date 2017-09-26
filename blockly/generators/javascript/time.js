@@ -86,6 +86,10 @@ String.prototype.getTextFromNumber = function(startPos) {
   }; 
 };
 
+Boolean.prototype.and = function(b) { return this.valueOf() && b; };
+Boolean.prototype.or = function(b) { return this.valueOf() || b; };
+function not(b) { return !b; }
+
 function Unit(quantity, type) {
   this._quantity = quantity || 0;
   this._type = type;
@@ -1329,13 +1333,13 @@ Blockly.JavaScript['logic_negate_value'] = function(block) {
   var order = Blockly.JavaScript.ORDER_LOGICAL_NOT;
   var argument0 = Blockly.JavaScript.valueToCode(block, 'BOOL', order) ||
       'true';
-  var code = '!' + argument0;
-  return [code, order];
+  var code = 'not(' + argument0 +')';
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
 
 Blockly.JavaScript['logic_operation_general'] = function(block) {
   // Operations 'and', 'or'.
-  var operator = (block.getFieldValue('OP') == 'and') ? '&&' : '||';
+  var operator = (block.getFieldValue('OP') == 'and') ? 'and' : 'or';
   var order = (operator == '&&') ? Blockly.JavaScript.ORDER_LOGICAL_AND :
       Blockly.JavaScript.ORDER_LOGICAL_OR;
   var argument0 = Blockly.JavaScript.valueToCode(block, 'A', order);
@@ -1354,8 +1358,8 @@ Blockly.JavaScript['logic_operation_general'] = function(block) {
       argument1 = defaultArgument;
     }
   }
-  var code = argument0 + ' ' + operator + ' ' + argument1;
-  return [code, order];
+  var code = argument0 + '.' + operator + '(' + argument1 + ')';
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
 
 Blockly.JavaScript['controls_repeat_times'] = function(block) {
