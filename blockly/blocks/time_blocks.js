@@ -1488,11 +1488,13 @@ Blockly.Blocks['controls_if_logic'] = {
     this.setColour(Blockly.Blocks.logic.HUE);
     this.appendValueInput('IF0')
         .setCheck('Boolean')
-        .appendField(Blockly.Msg.CONTROLS_IF_MSG_IF);
-    this.appendStatementInput('DO0');
+        .appendField(Blockly.Msg.CONTROLS_IF_MSG_IF + "(");
+    this.appendDummyInput()
+        .appendField(") {");
+    this.appendStatementInput('DO0')
         /*.appendField(Blockly.Msg.CONTROLS_IF_MSG_THEN);*/
     this.appendDummyInput('END')
-        .appendField("end");
+        .appendField("}");
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.setMutator(new Blockly.Mutator(['controls_if_elseif_logic',
@@ -1648,26 +1650,35 @@ Blockly.Blocks['controls_if_logic'] = {
     while (this.getInput('IF' + i)) {
       this.removeInput('IF' + i);
       this.removeInput('DO' + i);
+      this.removeInput("BRACES_END" + i);
       i++;
     }
     if(this.getInput('END')) {
       this.removeInput('END');
     }
+
     // Rebuild block.
     for (var i = 1; i <= this.elseifCount_; i++) {
       this.appendValueInput('IF' + i)
           .setCheck('Boolean')
-          .appendField("elsif");
+          .appendField("} else if(");
+      this.appendDummyInput("BRACES_END" + i)
+          .appendField(") {");
       this.appendStatementInput('DO' + i);
           /*.appendField(Blockly.Msg.CONTROLS_IF_MSG_THEN);*/
     }
+
+    this.removeInput('ELSESTART');
+
     if (this.elseCount_) {
+      this.appendDummyInput("ELSESTART")
+          .appendField("} " + Blockly.Msg.CONTROLS_IF_MSG_ELSE + " { ");
       this.appendStatementInput('ELSE')
-          .appendField(Blockly.Msg.CONTROLS_IF_MSG_ELSE);
+          //.appendField("} " + Blockly.Msg.CONTROLS_IF_MSG_ELSE + " { ");
     }
     
     this.appendDummyInput('END')
-        .appendField("end");
+        .appendField("}");
   }
 };
 
@@ -1694,7 +1705,7 @@ Blockly.Blocks['controls_if_elseif_logic'] = {
   init: function() {
     this.setColour(Blockly.Blocks.logic.HUE);
     this.appendDummyInput()
-        .appendField("elsif");
+        .appendField("else if");
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.setTooltip(Blockly.Msg.CONTROLS_IF_ELSEIF_TOOLTIP);
