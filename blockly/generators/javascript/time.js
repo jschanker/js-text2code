@@ -1340,8 +1340,9 @@ Blockly.JavaScript['logic_negate_value'] = function(block) {
 Blockly.JavaScript['logic_operation_general'] = function(block) {
   // Operations 'and', 'or'.
   var operator = (block.getFieldValue('OP') == 'and') ? 'and' : 'or';
-  var order = (operator == '&&') ? Blockly.JavaScript.ORDER_LOGICAL_AND :
-      Blockly.JavaScript.ORDER_LOGICAL_OR;
+  //var order = (operator == '&&') ? Blockly.JavaScript.ORDER_LOGICAL_AND :
+  //    Blockly.JavaScript.ORDER_LOGICAL_OR;
+  var order = Blockly.Javascript.ORDER_FUNCTION_CALL;
   var argument0 = Blockly.JavaScript.valueToCode(block, 'A', order);
   var argument1 = Blockly.JavaScript.valueToCode(block, 'B', order);
   if (!argument0 && !argument1) {
@@ -1358,7 +1359,7 @@ Blockly.JavaScript['logic_operation_general'] = function(block) {
       argument1 = defaultArgument;
     }
   }
-  var code = argument0 + '.' + operator + '(' + argument1 + ')';
+  var code = '(' + argument0 + ')' + '.' + operator + '(' + argument1 + ')';
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
 
