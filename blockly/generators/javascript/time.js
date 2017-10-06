@@ -1342,7 +1342,7 @@ Blockly.JavaScript['logic_operation_general'] = function(block) {
   var operator = (block.getFieldValue('OP') == 'and') ? 'and' : 'or';
   //var order = (operator == '&&') ? Blockly.JavaScript.ORDER_LOGICAL_AND :
   //    Blockly.JavaScript.ORDER_LOGICAL_OR;
-  var order = Blockly.Javascript.ORDER_FUNCTION_CALL;
+  var order = Blockly.JavaScript.ORDER_FUNCTION_CALL;
   var argument0 = Blockly.JavaScript.valueToCode(block, 'A', order);
   var argument1 = Blockly.JavaScript.valueToCode(block, 'B', order);
   if (!argument0 && !argument1) {
