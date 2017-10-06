@@ -41,8 +41,8 @@ function runCodeAndTestFunctions() {
       */
       
       variableNames.forEach(function(variableName) {
-        console.log(variableName);
-        newCode = newCode.replace(variableName, "let " + variableName);
+        //console.log(variableName);
+        newCode = newCode.replace("\n" + variableName + " = ", "\nlet " + variableName + " = ");
       });
 
       return newCode.trim();
