@@ -1359,7 +1359,7 @@ Blockly.JavaScript['logic_operation_general'] = function(block) {
       argument1 = defaultArgument;
     }
   }
-  var code = '(' + argument0 + ')' + '.' + operator + '(' + argument1 + ')';
+  var code = argument0 + '.' + operator + '(' + argument1 + ')';
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
 
