@@ -183,7 +183,7 @@ function remainderOf(dividend) {
 }
 
 Number.prototype.isDivisibleBy = function(d) {
-  return this.valueOf() % d === 0;
+  return (this.valueOf() % d) === 0;
 }
 
 Number.prototype.isEven = function() {
@@ -195,7 +195,7 @@ Number.prototype.isOdd = function() {
 }
 
 Number.prototype.isWhole = function() {
-  return (this.valueOf() >= 0) && (this.valueOf() % 2 === 0);
+  return (this.valueOf() >= 0) && ((this.valueOf() % 1) === 0);
 }
 
 Number.prototype.isPositive = function() {
