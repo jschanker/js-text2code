@@ -182,6 +182,46 @@ function remainderOf(dividend) {
   }
 }
 
+Number.prototype.isDivisibleBy = function(d) {
+  return this % d === 0;
+}
+
+Number.prototype.isEven = function() {
+  return this.isDivisibleBy(2);
+}
+
+Number.prototype.isOdd = function() {
+  return !this.isDivisibleBy(2);
+}
+
+Number.prototype.isWhole = function() {
+  return (this >= 0) && (this % 2 === 0);
+}
+
+Number.prototype.isPositive = function() {
+  return this > 0;
+}
+
+Number.prototype.isNegative = function() {
+  return this < 0;
+}
+
+function repeat(num) {
+  return {
+    times: function(action) {
+      return {
+        startingWith: function(seed) {
+          var current = seed;
+          for(var i = 0; i < num; i++) {
+            current = action(current);
+          }
+          return current;
+        }
+      };
+    }
+  };
+}
+
 function display(msg) {
   return {
     in: function(displayType) {
@@ -1117,19 +1157,19 @@ Blockly.JavaScript['math_number_property_single'] = function(block) {
   }
   switch (dropdown_property) {
     case '.is_even':
-      code = number_to_check + ' % 2 == 0';
+      code = number_to_check + ' .isEven()';
       break;
     case '.is_odd':
-      code = number_to_check + ' % 2 == 1';
+      code = number_to_check + ' .isOdd()';
       break;
     case '.is_whole':
-      code = number_to_check + ' % 1 == 0';
+      code = number_to_check + ' .isWhole()';
       break;
     case '.is_positive':
-      code = number_to_check + ' > 0';
+      code = number_to_check + ' .isPositive()';
       break;
     case '.is_negative':
-      code = number_to_check + ' < 0';
+      code = number_to_check + ' .isNegative()';
       break;
 /*
     case 'DIVISIBLE_BY':
@@ -1139,7 +1179,7 @@ Blockly.JavaScript['math_number_property_single'] = function(block) {
       break;
 */
   }
-  return [code, Blockly.JavaScript.ORDER_EQUALITY];
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
 
 Blockly.JavaScript['math_number_property_divisible'] = function(block) {
@@ -1150,9 +1190,9 @@ Blockly.JavaScript['math_number_property_divisible'] = function(block) {
   var code;
   var divisor = Blockly.JavaScript.valueToCode(block, 'DIVISOR',
                 Blockly.JavaScript.ORDER_MODULUS) || '0';
-  code = number_to_check + ' % ' + divisor + ' == 0';
+  code = number_to_check + ' .isDivisibleBy(' + divisor + ')';
 
-  return [code, Blockly.JavaScript.ORDER_EQUALITY];
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
 
 Blockly.JavaScript['quotient'] = function(block) {
