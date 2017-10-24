@@ -1736,12 +1736,12 @@ Blockly.Blocks['math_number_property_single'] = {
    */
   init: function() {
     var PROPERTIES =
-        [['.is_even', '.is_even'],
-         ['.is_odd', '.is_odd'],
-         ['.is_prime', '.is_prime'],
-         ['.is_whole', '.is_whole'],
-         ['.is_positive', '.is_positive'],
-         ['.is_negative', '.is_negative']];
+        [['.isEven()', '.is_even'],
+         ['.isOdd()', '.is_odd'],
+         ['.isPrime()', '.is_prime'],
+         ['.isWhole()', '.is_whole'],
+         ['.isPositive()', '.is_positive'],
+         ['.isNegative()', '.is_negative']];
     this.setColour(Blockly.Blocks.math.HUE);
     this.appendValueInput('NUMBER_TO_CHECK')
         .setCheck('Number');
@@ -1765,7 +1765,7 @@ Blockly.Blocks['math_number_property_divisible'] = {
     this.appendValueInput('NUMBER_TO_CHECK')
         .setCheck('Number');
     this.appendValueInput('DIVISOR')
-        .appendField(".is_divisible_by(", 'PROPERTY')
+        .appendField(" .isDivisibleBy(", 'PROPERTY')
         .setCheck('Number');
     this.appendDummyInput()
         .appendField(")");
