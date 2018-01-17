@@ -1589,11 +1589,11 @@ Blockly.JavaScript['math_number_arithmetic'] = function(block) {
 Blockly.JavaScript['math_number_word_arithmetic'] = function(block) {
   // Basic arithmetic operators, and power.
   var OPERATORS = {
-    'plus': ['plus', Blockly.JavaScript.ORDER_FUNCTION_CALL],
-    'minus': ['minus', Blockly.JavaScript.ORDER_FUNCTION_CALL],
-    'times': ['times', Blockly.JavaScript.ORDER_FUNCTION_CALL],
-    'dividedBy': ['dividedBy', Blockly.JavaScript.ORDER_FUNCTION_CALL],
-    'raisedToThe': ['raisedToThe', Blockly.JavaScript.ORDER_FUNCTION_CALL]
+    '+': ['plus', Blockly.JavaScript.ORDER_FUNCTION_CALL],
+    '-': ['minus', Blockly.JavaScript.ORDER_FUNCTION_CALL],
+    '*': ['times', Blockly.JavaScript.ORDER_FUNCTION_CALL],
+    '/': ['dividedBy', Blockly.JavaScript.ORDER_FUNCTION_CALL],
+    '**': ['raisedToThe', Blockly.JavaScript.ORDER_FUNCTION_CALL]
   };
   var tuple = OPERATORS[block.getFieldValue('OP')];
   var operator = tuple[0];
