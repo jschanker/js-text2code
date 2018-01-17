@@ -560,14 +560,47 @@ Blockly.JavaScript['currency_number'] = function(block) {
   return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
 
-// General print units function
-
 Blockly.JavaScript['convert_to_number'] = function(block) {
   var str_value = Blockly.JavaScript.valueToCode(block, 'STR', Blockly.JavaScript.ORDER_ATOMIC);
 
   var code = str_value + ".toNumber()";
 
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['js_convert_to_number'] = function(block) {
+  var str_value = Blockly.JavaScript.valueToCode(block, 'STR', Blockly.JavaScript.ORDER_ATOMIC);
+
+  var code = "parseFloat(" + str_value + ")";
+
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+// General print units function
+
+Blockly.JavaScript['units_js_print'] = function(block) {
+  // Print statement.
+  var msg = Blockly.JavaScript.valueToCode(block, 'TEXT',
+      Blockly.JavaScript.ORDER_NONE) || '\'\'';
+  var msg = msg instanceof Unit ? msg + " " + msg._units : msg;
+  var displayType = block.getFieldValue('TYPE') === "console" ? "console.log" : "window.alert";
+  displayType = (typeof displayType.replace === "function") ? displayType.replace("_", " ") : displayType;
+  var resultCell = Blockly.JavaScript.valueToCode(block, 'RESULT_CELL');
+  resultCell = resultCell ? " " + resultCell : "";
+  return displayType + '(' + msg + ');\n';
+};
+
+Blockly.JavaScript['js_result_cell_print'] = function(block) {
+  // Print statement.
+  var msg = Blockly.JavaScript.valueToCode(block, 'TEXT',
+      Blockly.JavaScript.ORDER_NONE) || '\'\'';
+  var msg = msg instanceof Unit ? msg + " " + msg._units : msg;
+  var resultCell = Blockly.JavaScript.valueToCode(block, 'RESULT_CELL');
+  if(document.getElementById(resultCell)) {
+    return 'document.getElementById(\"' + resultCell + '\").innerText = ' + msg + ";\n";
+  } else {
+    return 'window.alert(' + msg + ');\n';
+  }
 };
 
 
@@ -781,6 +814,15 @@ Blockly.JavaScript['prompt_for'] = function(block) {
 };
 */
 
+Blockly.JavaScript['js_prompt'] = function(block) {
+  var text_text = block.getFieldValue('TEXT');
+  // TODO: Assemble JavaScript into code variable.
+  var code = 'prompt("' + text_text + '")';
+  //var code = 'window.prompt("' + text_text + '")';
+  // TODO: Change ORDER_NONE to the correct strength.
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
 Blockly.JavaScript['prompt_for_number'] = function(block) {
   var text_text = block.getFieldValue('TEXT');
   // TODO: Assemble JavaScript into code variable.
@@ -835,6 +877,18 @@ Blockly.JavaScript['after_substring'] = function(block) {
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
 
+Blockly.JavaScript['js_string_charat'] = function(block) {
+  // Get letter at index.
+  // Note: Until January 2013 this block did not have the WHERE input.
+  /*var where = block.getFieldValue('WHERE') || 'FROM_START';*/
+  var textOrder = Blockly.JavaScript.ORDER_MEMBER;
+  var text = Blockly.JavaScript.valueToCode(block, 'VALUE', textOrder) || '\'\'';
+  var at = Blockly.JavaScript.valueToCode(block, 'AT');
+
+  var code = text + '.charAt(' + at + ')';
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
 Blockly.JavaScript['string_charat'] = function(block) {
   // Get letter at index.
   // Note: Until January 2013 this block did not have the WHERE input.
@@ -847,9 +901,39 @@ Blockly.JavaScript['string_charat'] = function(block) {
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
 
+Blockly.JavaScript['js_string_indexof_first'] = function(block) {
+  // Search the text for a substring.
+  var operator = 'indexOf';
+  var substring = Blockly.JavaScript.valueToCode(block, 'FIND',
+      Blockly.JavaScript.ORDER_NONE) || '\'\'';
+  var text = Blockly.JavaScript.valueToCode(block, 'VALUE',
+      Blockly.JavaScript.ORDER_MEMBER) || '\'\'';
+  var code = text + '.' + operator + '(' + substring + ')';
+  // Adjust index if using one-based indices.
+  if (block.workspace.options.oneBasedIndex) {
+    return [code, Blockly.JavaScript.ORDER_ADDITION];
+  }
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
 Blockly.JavaScript['string_indexof_first'] = function(block) {
   // Search the text for a substring.
   var operator = 'findFirstOccurrenceOfText';
+  var substring = Blockly.JavaScript.valueToCode(block, 'FIND',
+      Blockly.JavaScript.ORDER_NONE) || '\'\'';
+  var text = Blockly.JavaScript.valueToCode(block, 'VALUE',
+      Blockly.JavaScript.ORDER_MEMBER) || '\'\'';
+  var code = text + '.' + operator + '(' + substring + ')';
+  // Adjust index if using one-based indices.
+  if (block.workspace.options.oneBasedIndex) {
+    return [code, Blockly.JavaScript.ORDER_ADDITION];
+  }
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['js_string_indexof_last'] = function(block) {
+  // Search the text for a substring.
+  var operator = 'lastIndexOf';
   var substring = Blockly.JavaScript.valueToCode(block, 'FIND',
       Blockly.JavaScript.ORDER_NONE) || '\'\'';
   var text = Blockly.JavaScript.valueToCode(block, 'VALUE',
@@ -874,6 +958,18 @@ Blockly.JavaScript['string_indexof_last'] = function(block) {
   if (block.workspace.options.oneBasedIndex) {
     return [code, Blockly.JavaScript.ORDER_ADDITION];
   }
+  return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['js_string_getsubstring'] = function(block) {
+  // Get substring.
+  var text = Blockly.JavaScript.valueToCode(block, 'STRING',
+      Blockly.JavaScript.ORDER_FUNCTION_CALL) || '\'\'';
+  var at1 = Blockly.JavaScript.valueToCode(block, 'AT1');
+  var at2 = Blockly.JavaScript.valueToCode(block, 'AT2'); //|| "(" + text + ").length";
+  
+  code = text + '.substring(' + at1 + ', ' + at2 + ')';
+
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
 };
 
@@ -1217,6 +1313,16 @@ Blockly.JavaScript['remainder'] = function(block) {
   return [code, Blockly.JavaScript.ORDER_FUNCTION];
 };
 
+Blockly.JavaScript['js_remainder'] = function(block) {
+  var dividend = Blockly.JavaScript.valueToCode(block, 'A',
+      Blockly.JavaScript.ORDER_MODULUS) || '0';
+  var code;
+  var divisor = Blockly.JavaScript.valueToCode(block, 'B',
+                Blockly.JavaScript.ORDER_MODULUS) || '0';
+  code = dividend + ' % ' + divisor;
+
+  return [code, Blockly.JavaScript.ORDER_FUNCTION];
+};
 
 Blockly.JavaScript['math_number_single'] = function(block) {
   // Math operators with single operand.
@@ -1259,6 +1365,9 @@ Blockly.JavaScript['math_number_single'] = function(block) {
     case 'POW10':
       code = 'Math.pow(10,' + arg + ')';
       break;
+    case 'TRUNC':
+      code = 'Math.trunc(' + arg + ')';
+      break;
     case 'round':
       code = 'Math.round(' + arg + ')';
       break;
@@ -1300,6 +1409,14 @@ Blockly.JavaScript['math_number_single'] = function(block) {
       throw 'Unknown math operator: ' + operator;
   }
   return [code, Blockly.JavaScript.ORDER_DIVISION];
+};
+
+Blockly.JavaScript['js_string_concatenate'] = function(block) {
+  var argument0 = Blockly.JavaScript.valueToCode(block, 'A', Blockly.JavaScript.ORDER_NONE) || '\'\'';
+  var argument1 = Blockly.JavaScript.valueToCode(block, 'B', Blockly.JavaScript.ORDER_NONE) || '\'\'';
+  var code;
+  code = argument0 + " + " + argument1;
+  return [code, Blockly.JavaScript.ORDER_ADDITION];
 };
 
 Blockly.JavaScript['string_concatenate'] = function(block) {
@@ -1499,6 +1616,8 @@ Blockly.JavaScript['math_number_trig'] = Blockly.JavaScript['math_number_single'
 Blockly.Msg.VARIABLES_SET = "let %1 = %2";
 Blockly.Msg.MATH_POWER_SYMBOL = "**";
 Blockly.Msg.MATH_DIVISION_SYMBOL = "/";
-Blockly.Msg.MATH_ROUND_OPERATOR_ROUNDUP = "round_up";
-Blockly.Msg.MATH_ROUND_OPERATOR_ROUNDDOWN = "round_down";
+Blockly.Msg.MATH_ROUND_OPERATOR_TRUNC = "trunc";
+Blockly.Msg.MATH_ROUND_OPERATOR_ROUNDUP = "ceil";
+Blockly.Msg.MATH_ROUND_OPERATOR_ROUNDDOWN = "floor";
+Blockly.Msg.MATH_SINGLE_OP_ROOT = "sqrt";
 //alert(Blockly.Msg.VARIABLES_SET);

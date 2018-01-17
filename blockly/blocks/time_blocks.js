@@ -513,6 +513,42 @@ Blockly.Blocks['units_print'] = {
   }
 };
 
+Blockly.Blocks['units_js_print'] = {
+  init: function() {
+    this.appendValueInput("TEXT")
+        .setCheck(null)
+        .appendField(new Blockly.FieldDropdown([["console.log", "console"], ["window.alert", "box"]]), "TYPE")
+        .appendField("(");
+    this.appendDummyInput("CLOSE")
+        .appendField(");");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setInputsInline(true);
+    this.setColour(160);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+
+Blockly.Blocks['js_result_cell_print'] = {
+  init: function() {
+    this.appendValueInput("RESULT_CELL")
+        .setCheck('result_cell')
+        .appendField("document.getElementById(\"")
+    this.appendValueInput("TEXT")
+        .setCheck(null)
+        .appendField("\").value = ")
+    this.appendDummyInput("CLOSE")
+        .appendField(";");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setInputsInline(true);
+    this.setColour(160);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+
 Blockly.Blocks['input_cell'] = {
   init: function() {
     this.appendDummyInput()
@@ -705,6 +741,21 @@ Blockly.Blocks['convert_to_number'] = {
   }
 };
 
+Blockly.Blocks['js_convert_to_number'] = {
+  init: function() {
+    this.appendValueInput("STR")
+        .setCheck("String")
+        .appendField("parseFloat(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setOutput(true, ["Number", "seconds","minutes","hours","days","pennies","nickels","quarters","dollars"]);
+    this.setColour(160);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+
+
 Blockly.Blocks['prompt_for_number'] = {
   init: function() {
     this.appendDummyInput()
@@ -725,6 +776,20 @@ Blockly.Blocks['prompt_for_text'] = {
         .appendField(new Blockly.FieldTextInput("Enter text: "), "TEXT")
         .appendField("\")");
     this.setOutput(true, "String");
+    this.setColour(160);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+
+Blockly.Blocks['js_prompt'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField("prompt(\"")
+        .appendField(new Blockly.FieldTextInput("Enter input: "), "TEXT")
+        .appendField("\")");
+    this.setOutput(true, "String");
+    //this.setOutput(true, null);
     this.setColour(160);
     this.setTooltip('');
     this.setHelpUrl('');
@@ -1019,6 +1084,34 @@ Blockly.Blocks['function_calltwoinputs'] = {
   }
 };
 
+Blockly.Blocks['js_string_concatenate'] = {
+  /**
+   * Block for basic arithmetic operator.
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.jsonInit({
+      "message0": "%1 + %2",
+      "args0": [
+        {
+          "type": "input_value",
+          "name": "A",
+          "check": "String"
+        },
+        {
+          "type": "input_value",
+          "name": "B",
+          "check": "String"
+        }
+      ],
+      "inputsInline": true,
+      "output": "String",
+      "colour": 160,
+      "helpUrl": ""
+    });
+  }
+};
+
 Blockly.Blocks['string_concatenate'] = {
   /**
    * Block for basic arithmetic operator.
@@ -1070,6 +1163,23 @@ Blockly.Blocks['string_length'] = {
   }
 };
 
+Blockly.Blocks['js_string_indexof_first'] = {
+  init: function() {
+    this.appendValueInput("VALUE")
+        .setCheck("String");
+    this.appendValueInput("FIND")
+        .setCheck("String")
+        .appendField(".indexOf(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setColour(Blockly.Blocks.texts.HUE);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+
 Blockly.Blocks['string_indexof_first'] = {
   init: function() {
     this.appendValueInput("VALUE")
@@ -1077,6 +1187,23 @@ Blockly.Blocks['string_indexof_first'] = {
     this.appendValueInput("FIND")
         .setCheck("String")
         .appendField(".findFirstOccurrenceOfText(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setColour(Blockly.Blocks.texts.HUE);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+
+Blockly.Blocks['js_string_indexof_last'] = {
+  init: function() {
+    this.appendValueInput("VALUE")
+        .setCheck("String");
+    this.appendValueInput("FIND")
+        .setCheck("String")
+        .appendField(".lastIndexOf(");
     this.appendDummyInput()
         .appendField(")");
     this.setInputsInline(true);
@@ -1111,6 +1238,43 @@ Blockly.Blocks['string_charat'] = {
     this.appendValueInput("AT")
         .setCheck("Number")
         .appendField(".getCharacterNumber(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, "String");
+    this.setColour(Blockly.Blocks.texts.HUE);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+
+Blockly.Blocks['js_string_charat'] = {
+  init: function() {
+    this.appendValueInput("VALUE")
+        .setCheck("String");
+    this.appendValueInput("AT")
+        .setCheck("Number")
+        .appendField(".charAt(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    this.setOutput(true, "String");
+    this.setColour(Blockly.Blocks.texts.HUE);
+    this.setTooltip('');
+    this.setHelpUrl('');
+  }
+};
+
+Blockly.Blocks['js_string_getsubstring'] = {
+  init: function() {
+    this.appendValueInput("STRING")
+        .setCheck("String");
+    this.appendValueInput("AT1")
+        .setCheck("Number")
+        .appendField(".substring(");
+    this.appendValueInput("AT2")
+        .setCheck("Number")
+        .appendField(", ");
     this.appendDummyInput()
         .appendField(")");
     this.setInputsInline(true);
@@ -1170,11 +1334,11 @@ Blockly.Blocks['math_number_word_arithmetic'] = {
           "type": "field_dropdown",
           "name": "OP",
           "options":
-            [['plus', 'plus'],
-             ['minus', 'minus'],
-             ['times', 'times'],
-             ['dividedBy', 'dividedBy'],
-             ['raisedToThe', 'raisedToThe']]
+            [['plus', '+'],
+             ['minus', '-'],
+             ['times', '*'],
+             ['dividedBy', '/'],
+             ['raisedToThe', '**']]
         },
         {
           "type": "input_value",
@@ -1237,6 +1401,21 @@ Blockly.Blocks['remainder'] = {
   }
 };
 
+Blockly.Blocks['js_remainder'] = {
+  init: function() {
+    this.appendValueInput("A")
+        .setCheck("Number");
+    this.appendValueInput("B")
+        .appendField(" % ")
+        .setCheck("Number");
+    this.setInputsInline(true);
+    this.setOutput(true, "Number");
+    this.setColour(Blockly.Blocks.math.HUE);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.example.com/');
+  }
+};
+
 Blockly.Blocks['math_number_arithmetic'] = {
   /**
    * Block for basic arithmetic operator.
@@ -1292,7 +1471,7 @@ Blockly.Blocks['math_number_round'] = {
   init: function() {
     this.jsonInit({
       "type": "math_number_round",
-      "message0": "%1.%2",
+      "message0": "Math.%2(%1)",
       "args0": [
         {
           "type": "input_value",
@@ -1303,9 +1482,11 @@ Blockly.Blocks['math_number_round'] = {
           "type": "field_dropdown",
           "name": "OP",
           "options": [
+            [Blockly.Msg.MATH_ROUND_OPERATOR_TRUNC, 'TRUNC'],
             [Blockly.Msg.MATH_ROUND_OPERATOR_ROUND, 'round'],
             [Blockly.Msg.MATH_ROUND_OPERATOR_ROUNDUP, 'round_up'],
-            [Blockly.Msg.MATH_ROUND_OPERATOR_ROUNDDOWN, 'round_down']
+            [Blockly.Msg.MATH_ROUND_OPERATOR_ROUNDDOWN, 'round_down'],
+            [Blockly.Msg.MATH_SINGLE_OP_ROOT, 'ROOT'],            
           ]
         },
       ],
