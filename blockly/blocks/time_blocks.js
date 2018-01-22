@@ -1371,13 +1371,13 @@ Blockly.Blocks['quotient'] = {
   init: function() {
     this.appendValueInput("A")
         .appendField("quotientOf(")
-        .setCheck("Number");
+        .setCheck(["Number", "input_cell", "seconds", "minutes", "hours", "days", "pennies", "nickels", "quarters", "dollars"]);
     this.appendValueInput("B")
         .appendField(").dividedBy(")
-        .setCheck("Number");
+        .setCheck(["Number", "input_cell", "seconds", "minutes", "hours", "days", "pennies", "nickels", "quarters", "dollars"]);
     this.appendDummyInput()
         .appendField(")");
-    this.setOutput(true, "Number");
+    this.setOutput(true, ["Number", "input_cell", "seconds", "minutes", "hours", "days", "pennies", "nickels", "quarters", "dollars"]);
     this.setColour(Blockly.Blocks.math.HUE);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -1388,13 +1388,13 @@ Blockly.Blocks['remainder'] = {
   init: function() {
     this.appendValueInput("A")
         .appendField("remainderOf(")
-        .setCheck("Number");
+        .setCheck(["Number", "input_cell", "seconds", "minutes", "hours", "days", "pennies", "nickels", "quarters", "dollars"]);
     this.appendValueInput("B")
         .appendField(").dividedBy(")
-        .setCheck("Number");
+        .setCheck(["Number", "input_cell", "seconds", "minutes", "hours", "days", "pennies", "nickels", "quarters", "dollars"]);
     this.appendDummyInput()
         .appendField(")");
-    this.setOutput(true, "Number");
+    this.setOutput(true, ["Number", "input_cell", "seconds", "minutes", "hours", "days", "pennies", "nickels", "quarters", "dollars"]);
     this.setColour(Blockly.Blocks.math.HUE);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
@@ -1404,12 +1404,12 @@ Blockly.Blocks['remainder'] = {
 Blockly.Blocks['js_remainder'] = {
   init: function() {
     this.appendValueInput("A")
-        .setCheck("Number");
+        .setCheck(["Number", "input_cell", "seconds", "minutes", "hours", "days", "pennies", "nickels", "quarters", "dollars"]);
     this.appendValueInput("B")
         .appendField(" % ")
-        .setCheck("Number");
+        .setCheck(["Number", "input_cell", "seconds", "minutes", "hours", "days", "pennies", "nickels", "quarters", "dollars"]);
     this.setInputsInline(true);
-    this.setOutput(true, "Number");
+    this.setOutput(true, ["Number", "input_cell", "seconds", "minutes", "hours", "days", "pennies", "nickels", "quarters", "dollars"]);
     this.setColour(Blockly.Blocks.math.HUE);
     this.setTooltip('');
     this.setHelpUrl('http://www.example.com/');
