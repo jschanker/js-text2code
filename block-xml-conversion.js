@@ -54,16 +54,8 @@
         var xmlText = Blockly.Xml.domToPrettyText(xmlDom);
         document.getElementById('xml_data').value = xmlText;
   }
-
-  document.getElementById("convert-to-ruby-text-btn")
-          .addEventListener("click", convertToCode);
-  document.getElementById("convertToXMLButton")
-          .addEventListener("click", convertToXML);
-    document.getElementById("convertToJSButton")
-          .addEventListener("click", function() {
-        
-        var workspace = workspace || Blockly.getMainWorkspace();
-        workspace.getAllBlocks().forEach(function(block) {
+  
+  function convertToJSBlock(block) {
             if(block.type === "units_print") {
               //var resultCell = null;
               if(block.getFieldValue("TYPE") === "result_cell" && block.getInput("RESULT_CELL")) {
@@ -114,10 +106,10 @@
               }
               truncBlock.getInput("NUM").connection.connect(dividedByBlock.outputConnection);
               
-              if(block.getInput("A").connection) {
+              if(block.getInput("A").connection.targetBlock()) {
                 dividedByBlock.getInput("A").connection.connect(block.getInput("A").connection.targetBlock().outputConnection);
               }
-              if(block.getInput("B").connection) {
+              if(block.getInput("B").connection.targetBlock()) {
                 dividedByBlock.getInput("B").connection.connect(block.getInput("B").connection.targetBlock().outputConnection);
               }
               block.dispose();
@@ -125,6 +117,84 @@
             else if(block.type === "remainder") {
               block.type = "js_remainder";
             }
+            else if(block.type === "seconds_to_minutes" ||
+                    block.type === "minutes_to_hours" ||
+                    block.type === "hours_to_days" || 
+                    block.type === "pennies_to_nickels" ||
+                    block.type === "nickels_to_quarters" ||
+                    block.type === "quarters_to_dollars" ||
+
+                    block.type === "remaining_seconds" ||
+                    block.type === "remaining_minutes" ||
+                    block.type === "remaining_hours" || 
+                    block.type === "remaining_pennies" ||
+                    block.type === "remaining_nickels" ||
+                    block.type === "remaining_quarters") {
+              var parentBlock = block.getParent();
+              var quotientBlock = null;
+              var numBlock = workspace.newBlock("math_number_general");
+              var divisor = 0;
+              var fieldName = "";
+
+              if(block.type === "seconds_to_minutes" ||
+                 block.type === "minutes_to_hours" ||
+                 block.type === "hours_to_days" || 
+                 block.type === "pennies_to_nickels" ||
+                 block.type === "nickels_to_quarters" ||
+                 block.type === "quarters_to_dollars") {
+                  quotientBlock = workspace.newBlock("quotient");
+              } else {
+                quotientBlock = workspace.newBlock("remainder");
+              }
+              
+              if(block.type === "seconds_to_minutes" || block.type === "minutes_to_hours" ||
+                 block.type === "remaining_seconds" || block.type === "remaining_minutes") {
+                divisor = 60;
+              }
+              else if(block.type === "hours_to_days" || block.type === "remaining_hours") {
+                divisor = 24;
+              }
+              else if(block.type === "pennies_to_nickels" || block.type === "nickels_to_quarters" ||
+                      block.type === "remaining_pennies" || block.type === "remaining_nickels") {
+                divisor = 5;
+              }
+              else {
+                divisor = 4;
+              }
+              
+              if(block.type === "seconds_to_minutes" || block.type === "remaining_seconds") {
+                fieldName = "SECONDS";
+              }
+              else if(block.type === "minutes_to_hours" || block.type === "remaining_minutes") {
+                fieldName = "MINUTES";
+              }
+              else if(block.type === "hours_to_days" || block.type === "remaining_hours") {
+                fieldName = "HOURS";
+              }
+              
+              else if(block.type === "pennies_to_nickels" || block.type === "remaining_pennies") {
+                fieldName = "PENNIES";
+              }
+              else if(block.type === "nickels_to_quarters" || block.type === "remaining_nickels") {
+                fieldName = "NICKELS";
+              }
+              else {
+                fieldName = "QUARTERS";
+              }
+              
+              quotientBlock.getInput("B").connection.connect(numBlock.outputConnection);
+              if(block.getInput(fieldName).connection.targetBlock()) {
+                quotientBlock.getInput("A").connection.connect(block.getInput(fieldName).connection.targetBlock().outputConnection);
+              }
+              numBlock.setFieldValue(divisor, "NUM");
+              
+              if(parentBlock) {
+                block.outputConnection.targetConnection.connect(quotientBlock.outputConnection);
+              }
+              block.dispose();
+              convertToJSBlock(quotientBlock);
+            }
+            
             else if(block.type === "string_concatenate") block.type = "js_string_concatenate";
             else if(block.type === "string_indexof_first") block.type = "js_string_indexof_first";
             else if(block.type === "string_indexof_last") block.type = "js_string_indexof_last";
@@ -369,7 +439,17 @@
               block.setFieldValue(block.getFieldValue("NUM")-1, "NUM");
             }
             */
-        });
+  }
+
+  document.getElementById("convert-to-ruby-text-btn")
+          .addEventListener("click", convertToCode);
+  document.getElementById("convertToXMLButton")
+          .addEventListener("click", convertToXML);
+    document.getElementById("convertToJSButton")
+          .addEventListener("click", function() {
+        
+        var workspace = workspace || Blockly.getMainWorkspace();
+        workspace.getAllBlocks().forEach(convertToJSBlock);
         
         var xmlDom = Blockly.Xml.workspaceToDom(workspace);
         var xmlText = Blockly.Xml.domToPrettyText(xmlDom);
