@@ -1214,8 +1214,9 @@ Blockly.JavaScript['math_number_general'] = function(block) {
   var number_num = block.getFieldValue('NUM');
   // TODO: Assemble JavaScript into code variable.
   var code = parseFloat(number_num);
+  var order = code >= 0 ? Blockly.JavaScript.ORDER_ATOMIC : Blockly.JavaScript.ORDER_UNARY_NEGATION; 
   // TODO: Change ORDER_NONE to the correct strength.
-  return [code, Blockly.JavaScript.ORDER_ATOMIC];
+  return [code, order];
 };
 
 Blockly.JavaScript['math_number_property_single'] = function(block) {
