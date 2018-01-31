@@ -56,6 +56,52 @@
   }
   
   function convertToJSBlock(block) {
+    function replaceWithBlock(block, replaceBlock, dispose) {
+      var parentBlock = block.getParent();
+      var parentInput = null;
+      var parentConnection = null;
+      var blockConnectionType = -1;
+      
+      if(parentBlock) {
+      	parentInput = parentBlock.getInputWithBlock(block);
+        parentConnection = parentInput ? parentInput.connection : parentBlock.nextConnection;
+        blockConnectionType = parentConnection.targetConnection.type;
+        if(blockConnectionType === Blockly.OUTPUT_VALUE) {
+          parentConnection.connect(replaceBlock.outputConnection);
+        }
+        else if(blockConnectionType === Blockly.PREVIOUS_STATEMENT) {
+          parentConnection.connect(replaceBlock.previousConnection);
+        }
+      } else {
+        replaceBlock.moveBy(block.getRelativeToSurfaceXY().x - replaceBlock.getRelativeToSurfaceXY().x,
+                            block.getRelativeToSurfaceXY().y - replaceBlock.getRelativeToSurfaceXY().y);
+      }
+      
+      block.getChildren().forEach(function(childBlock) {
+      	//alert(block);
+      	//alert(childBlock);
+      	//if(childBlock.getChildren().length > 0) replaceBlock(childBlock, childBlock);
+      	if(block.getNextBlock() !== childBlock) {
+      		// assume the child block connection is INPUT_VALUE/OUTPUT_VALUE since it's not 
+      		// PREVIOUS_STATEMENT/NEXT_STATEMENT
+      		var blockInput = block.getInputWithBlock(childBlock);
+      		var replaceBlockInput = replaceBlock.getInput(blockInput.name);
+      		if(replaceBlockInput) {
+      		  blockInput = replaceBlockInput.connection.connect(childBlock.outputConnection);
+      		}
+      	}
+      	else {
+      		replaceBlock.nextConnection.connect(block.getNextBlock().previousConnection);
+      	}
+      });
+
+      if(block.getNextBlock()) {
+        replaceBlock.nextConnection.connect(block.getNextBlock().previousConnection);
+      }
+      
+      if(dispose) block.dispose();
+      //if(dispose && block.getChildren().length === 0) block.dispose();
+    }
             if(block.type === "units_print") {
               //var resultCell = null;
               if(block.getFieldValue("TYPE") === "result_cell" && block.getInput("RESULT_CELL")) {
@@ -65,14 +111,19 @@
                  //document.getElementById("R" + block.getInputTargetBlock("RESULT_CELL").getFieldValue("COL"))) {
                  //block.setFieldValue(block.getInputTargetBlock("RESULT_CELL").getFieldValue("COL"), "COL");
                  //alert("R" + block.getInputTargetBlock("RESULT_CELL").getFieldValue("COL"));
-                 block.removeInput("TYPE");
-                 block.type = "js_result_cell_print";
+                 
+                 // OLD
+                 //block.removeInput("TYPE");
+                 //block.type = "js_result_cell_print";
+                 replaceWithBlock(block, workspace.newBlock("js_result_cell_print"), true);
               } else {
-                block.type = "units_js_print";
+                //block.type = "units_js_print";
+                replaceWithBlock(block, workspace.newBlock("units_js_print"), true);
               }
             }
             else if(block.type === "convert_to_number") {
-              block.type = "js_convert_to_number";
+              replaceWithBlock(block, workspace.newBlock("js_convert_to_number"), true);
+              //block.type = "js_convert_to_number";
             }
             else if(block.type === "prompt_for_number") {
               var parseFloatBlock = workspace.newBlock("js_convert_to_number");
