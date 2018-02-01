@@ -57,10 +57,19 @@
   
   function convertToJSBlock(block) {
     function replaceWithBlock(block, replaceBlock, dispose) {
+
       var parentBlock = block.getParent();
       var parentInput = null;
       var parentConnection = null;
       var blockConnectionType = -1;
+
+      block.inputList.forEach(function(input) {
+        input.fieldRow.forEach(function(field) {
+          if(replaceBlock.getField(field.name)) {
+            replaceBlock.setFieldValue(field.getValue(), field.name);
+          }
+        });
+      });
       
       if(parentBlock) {
       	parentInput = parentBlock.getInputWithBlock(block);
@@ -77,7 +86,7 @@
                             block.getRelativeToSurfaceXY().y - replaceBlock.getRelativeToSurfaceXY().y);
       }
       
-      block.getChildren().forEach(function(childBlock) {
+      block.getChildren().slice().forEach(function(childBlock) {
       	//alert(block);
       	//alert(childBlock);
       	//if(childBlock.getChildren().length > 0) replaceBlock(childBlock, childBlock);
@@ -95,10 +104,12 @@
       	}
       });
 
+/*
       if(block.getNextBlock()) {
         replaceBlock.nextConnection.connect(block.getNextBlock().previousConnection);
       }
-      
+*/
+
       if(dispose) block.dispose();
       //if(dispose && block.getChildren().length === 0) block.dispose();
     }
@@ -138,12 +149,12 @@
               parseFloatBlock.getInput("STR").connection.connect(block.outputConnection);
             }
             else if(block.type === "prompt_for_text") {
-              block.type = "js_prompt";
+              //block.type = "js_prompt";
+              replaceWithBlock(block, workspace.newBlock("js_prompt"), true);
             }
             else if(block.type === "math_number_word_arithmetic") {
-              block.type = "math_number_arithmetic";
-              //alert(block.getFieldValue("OP"));
-              //block.setField("", OP);
+              //block.type = "math_number_arithmetic";
+              replaceWithBlock(block, workspace.newBlock("math_number_arithmetic"), true);
             }
             else if(block.type === "quotient") {
               var truncBlock = workspace.newBlock("math_number_round");
@@ -354,7 +365,6 @@
               //  parentBlock.
               //}
             }
-            
             
             else if(block.type === "after_substring") {
               //var parentBlock = block.getParent();
