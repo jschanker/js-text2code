@@ -56,8 +56,134 @@
   }
   
   function convertToJSBlock(block) {
+    function setValueInput(sourceBlock, inputName, inputBlock) {
+      var blockInput = sourceBlock && sourceBlock.getInput(inputName);
+      var valueBlockConnection = inputBlock && inputBlock.outputConnection;
+      
+      if(blockInput && valueBlockConnection) {
+        blockInput.connection.connect(valueBlockConnection);
+      }
+    }
+    
+    function moveInputBlock(sourceBlock, destinationBlock, sourceInputName, destinationInputName) {
+      var inputBlock = sourceBlock && sourceBlock.getInputTargetBlock(sourceInputName);
+      destinationInputName = typeof destinationInputName === "undefined" ? 
+                             sourceInputName : destinationInputName;
+      setValueInput(destinationBlock, destinationInputName, inputBlock);
+    }
+    
+    function moveToSameLocation(sourceBlock, targetBlock) {
+      if(sourceBlock && targetBlock) {
+        targetBlock.moveBy(sourceBlock.getRelativeToSurfaceXY().x - targetBlock.getRelativeToSurfaceXY().x,
+                           sourceBlock.getRelativeToSurfaceXY().y - targetBlock.getRelativeToSurfaceXY().y);
+      }
+    }
+    
+    function copyBlock(block, deep) {
+      if(!block) return null;
+      
+      var blockCp = workspace.newBlock(block.type);
+      block.inputList.forEach(function(input) {
+        input.fieldRow.forEach(function(field) {
+            blockCp.setFieldValue(field.getValue(), field.name);
+        });
+      });
+      
+      if(deep) {
+        block.getChildren().slice().forEach(function(childBlock) {
+      	  if(block.getNextBlock() !== childBlock) {
+            var blockInput = block.getInputWithBlock(childBlock);
+            setValueInput(blockCp, blockInput.name, copyBlock(childBlock, true));
+          }
+        });
+      }
+      
+      return blockCp;
+      
+    }
+    
+    function getParentStatementBlock(block) {
+      if(!block) return null;
+      var parentBlock = block.getParent();
+      while(parentBlock && !parentBlock.previousConnection) {
+        parentBlock = parentBlock.getParent();
+      }
+      return parentBlock;
+    }
+    
+    function createNewTempVariable(prefix) {
+      // get next unused temp variable name
+      var tempVariableName = prefix || "temp";
+      var index = 1;
+      
+      while(workspace.variableIndexOf(tempVariableName + index) !== -1) { //deprecated
+        index++;
+      }
+      tempVariableName += index; 
+      workspace.createVariable(tempVariableName, "STRING");
+      return tempVariableName;
+    }
+    
+    function replaceWithBlock(block, replaceBlock, dispose) {
+
+      var parentBlock = block.getParent();
+      var parentInput = null;
+      var parentConnection = null;
+      var blockConnectionType = -1;
+
+      block.inputList.forEach(function(input) {
+        input.fieldRow.forEach(function(field) {
+          if(replaceBlock.getField(field.name)) {
+            replaceBlock.setFieldValue(field.getValue(), field.name);
+          }
+        });
+      });
+      
+      if(parentBlock) {
+      	parentInput = parentBlock.getInputWithBlock(block);
+        parentConnection = parentInput ? parentInput.connection : parentBlock.nextConnection;
+        blockConnectionType = parentConnection.targetConnection.type;
+        if(blockConnectionType === Blockly.OUTPUT_VALUE) {
+          parentConnection.connect(replaceBlock.outputConnection);
+        }
+        else if(blockConnectionType === Blockly.PREVIOUS_STATEMENT) {
+          parentConnection.connect(replaceBlock.previousConnection);
+        }
+      } else {
+        replaceBlock.moveBy(block.getRelativeToSurfaceXY().x - replaceBlock.getRelativeToSurfaceXY().x,
+                            block.getRelativeToSurfaceXY().y - replaceBlock.getRelativeToSurfaceXY().y);
+      }
+      
+      block.getChildren().slice().forEach(function(childBlock) {
+      	//alert(block);
+      	//alert(childBlock);
+      	//if(childBlock.getChildren().length > 0) replaceBlock(childBlock, childBlock);
+      	if(block.getNextBlock() !== childBlock) {
+      		// assume the child block connection is INPUT_VALUE/OUTPUT_VALUE since it's not 
+      		// PREVIOUS_STATEMENT/NEXT_STATEMENT
+      		var blockInput = block.getInputWithBlock(childBlock);
+      		var replaceBlockInput = replaceBlock.getInput(blockInput.name);
+      		if(replaceBlockInput) {
+      		  blockInput = replaceBlockInput.connection.connect(childBlock.outputConnection);
+      		}
+      	}
+      	else {
+      		replaceBlock.nextConnection.connect(block.getNextBlock().previousConnection);
+      	}
+      });
+
+/*
+      if(block.getNextBlock()) {
+        replaceBlock.nextConnection.connect(block.getNextBlock().previousConnection);
+      }
+*/
+
+      if(dispose) block.dispose();
+      //if(dispose && block.getChildren().length === 0) block.dispose();
+    }
             if(block.type === "units_print") {
               //var resultCell = null;
+
               if(block.getFieldValue("TYPE") === "result_cell" && block.getInput("RESULT_CELL")) {
                  //block.getInputTargetBlock("RESULT_CELL")) { //&&
                  //block.getInputTargetBlock("RESULT_CELL").type === "result_cell_column") { //&&
@@ -65,14 +191,19 @@
                  //document.getElementById("R" + block.getInputTargetBlock("RESULT_CELL").getFieldValue("COL"))) {
                  //block.setFieldValue(block.getInputTargetBlock("RESULT_CELL").getFieldValue("COL"), "COL");
                  //alert("R" + block.getInputTargetBlock("RESULT_CELL").getFieldValue("COL"));
-                 block.removeInput("TYPE");
-                 block.type = "js_result_cell_print";
+                 
+                 // OLD
+                 //block.removeInput("TYPE");
+                 //block.type = "js_result_cell_print";
+                 replaceWithBlock(block, workspace.newBlock("js_result_cell_print"), true);
               } else {
-                block.type = "units_js_print";
+                //block.type = "units_js_print";
+                replaceWithBlock(block, workspace.newBlock("units_js_print"), true);
               }
             }
             else if(block.type === "convert_to_number") {
-              block.type = "js_convert_to_number";
+              replaceWithBlock(block, workspace.newBlock("js_convert_to_number"), true);
+              //block.type = "js_convert_to_number";
             }
             else if(block.type === "prompt_for_number") {
               var parseFloatBlock = workspace.newBlock("js_convert_to_number");
@@ -87,12 +218,12 @@
               parseFloatBlock.getInput("STR").connection.connect(block.outputConnection);
             }
             else if(block.type === "prompt_for_text") {
-              block.type = "js_prompt";
+              //block.type = "js_prompt";
+              replaceWithBlock(block, workspace.newBlock("js_prompt"), true);
             }
             else if(block.type === "math_number_word_arithmetic") {
-              block.type = "math_number_arithmetic";
-              //alert(block.getFieldValue("OP"));
-              //block.setField("", OP);
+              //block.type = "math_number_arithmetic";
+              replaceWithBlock(block, workspace.newBlock("math_number_arithmetic"), true);
             }
             else if(block.type === "quotient") {
               var truncBlock = workspace.newBlock("math_number_round");
@@ -106,9 +237,12 @@
               }
               truncBlock.getInput("NUM").connection.connect(dividedByBlock.outputConnection);
               
+              /*
               if(block.getInput("A").connection.targetBlock()) {
                 dividedByBlock.getInput("A").connection.connect(block.getInput("A").connection.targetBlock().outputConnection);
               }
+              */
+              moveInputBlock(block, dividedByBlock, "A");
               if(block.getInput("B").connection.targetBlock()) {
                 dividedByBlock.getInput("B").connection.connect(block.getInput("B").connection.targetBlock().outputConnection);
               }
@@ -182,10 +316,19 @@
                 fieldName = "QUARTERS";
               }
               
-              quotientBlock.getInput("B").connection.connect(numBlock.outputConnection);
-              if(block.getInput(fieldName).connection.targetBlock()) {
-                quotientBlock.getInput("A").connection.connect(block.getInput(fieldName).connection.targetBlock().outputConnection);
+              if(quotientBlock.type === "remainder") {
+                var truncBlock = workspace.newBlock("math_number_round");              
+                truncBlock.setFieldValue('TRUNC', "OP");
+                setValueInput(truncBlock, "NUM", block.getInput(fieldName).connection.targetBlock());
+                setValueInput(quotientBlock, "A", truncBlock);              
+              } else {
+                setValueInput(quotientBlock, "A", block.getInput(fieldName).connection.targetBlock());
               }
+              
+              quotientBlock.getInput("B").connection.connect(numBlock.outputConnection);
+              /*if(block.getInput(fieldName).connection.targetBlock()) {
+                quotientBlock.getInput("A").connection.connect(block.getInput(fieldName).connection.targetBlock().outputConnection);
+              }*/
               numBlock.setFieldValue(divisor, "NUM");
               
               if(parentBlock) {
@@ -216,6 +359,71 @@
               block.type = "js_string_getsubstring";
             }
             else if(block.type === "before_substring") {
+              //var parentBlock = block.getParent();
+              var needleBlock = block.getInputTargetBlock("SUB");
+              var textBlock = block.getInputTargetBlock("TEXT");
+              var textBlockCp = null;
+              var substringBlock = workspace.newBlock("js_string_getsubstring");
+              var startBlock = workspace.newBlock("math_number_general");
+              var indexOfBlock = workspace.newBlock("js_string_indexof_first");
+              
+              startBlock.setFieldValue(0, "NUM");
+              
+              if(textBlock) {
+                if(textBlock.type === "text") {
+                  textBlockCp = workspace.newBlock(textBlock.type);
+                  textBlockCp.setFieldValue(textBlock.getFieldValue("TEXT"), "TEXT");
+                  
+                  indexOfBlock.getInput("VALUE").connection.connect(textBlockCp.outputConnection);
+                  substringBlock.getInput("STRING").connection.connect(textBlock.outputConnection);
+                }
+                else if(textBlock.type === "variables_get") {
+                  textBlockCp = workspace.newBlock(textBlock.type);
+                  textBlockCp.setFieldValue(textBlock.getFieldValue("VAR"), "VAR");
+                  
+                  indexOfBlock.getInput("VALUE").connection.connect(textBlockCp.outputConnection);
+                  substringBlock.getInput("STRING").connection.connect(textBlock.outputConnection);
+                }
+                else {
+                    // Blockly.Workspace.prototype.createVariable = function(name, opt_type, opt_id)
+                    //var tempVariableName = Blockly.Variables.generateUniqueName(workspace);
+                    
+                    // get next unused temp variable name
+                    var tempVariableName = createNewTempVariable();
+                    var setBlock = workspace.newBlock("variables_set");
+                    setBlock.setFieldValue(tempVariableName, "VAR");
+                    setValueInput(setBlock, "VALUE", textBlock);
+                    
+                    var tempVariableBlock = workspace.newBlock("variables_get");
+                    tempVariableBlock.setFieldValue(tempVariableName, "VAR");
+                    var tempVariableBlockCp = copyBlock(tempVariableBlock);
+                    setValueInput(indexOfBlock, "VALUE", tempVariableBlockCp);
+                    setValueInput(substringBlock, "STRING", tempVariableBlock);
+                    
+                    // insert variable initialization before statement block using getBeforeText value
+                    var parentStatementBlock = getParentStatementBlock(block);
+                    if(parentStatementBlock) {
+                      var previousBlock = parentStatementBlock.previousConnection.targetBlock();
+                      if(previousBlock) {
+                        setBlock.previousConnection.connect(previousBlock.nextConnection);
+                      }
+                      parentStatementBlock.previousConnection.connect(setBlock.nextConnection);
+                    }
+                }
+              }
+              
+              if(needleBlock) setValueInput(indexOfBlock, "FIND", needleBlock);
+              setValueInput(substringBlock, "AT1", startBlock);
+              setValueInput(substringBlock, "AT2", indexOfBlock);
+              if(block.outputConnection.targetConnection) block.outputConnection.targetConnection.connect(substringBlock.outputConnection);
+              else moveToSameLocation(block, substringBlock);
+              block.dispose();
+              //if(parentBlock) {
+              //  parentBlock.
+              //}
+            }
+
+            else if(block.type === "before_substring_old") {
               //var parentBlock = block.getParent();
               var needleBlock = block.getInputTargetBlock("SUB");
               var textBlock = block.getInputTargetBlock("TEXT");
@@ -303,9 +511,129 @@
               //  parentBlock.
               //}
             }
-            
-            
             else if(block.type === "after_substring") {
+              var parentBlock = block.getParent();
+              var substringBlock = workspace.newBlock("js_string_getsubstring");
+              var textBlock = block.getInputTargetBlock("TEXT");
+              var needleBlock = block.getInputTargetBlock("SUB");
+              var indexOfBlock = workspace.newBlock("js_string_indexof_first");
+              var textLengthBlock = workspace.newBlock("string_length");
+              var needleLengthBlock = workspace.newBlock("string_length");
+              var plusBlock = workspace.newBlock("math_number_arithmetic");
+              plusBlock.setFieldValue('+', "OP"); 
+              
+              if(textBlock) {
+                if(textBlock.type !== "text" && textBlock.type !== "variables_get") {
+                  var textVariableSetBlock = workspace.newBlock("variables_set");
+                  var tempVariableName = createNewTempVariable();
+                  textVariableSetBlock.setFieldValue(tempVariableName, "VAR");
+                  setValueInput(textVariableSetBlock, "VALUE", textBlock);
+                  // append before statement
+                  var parentStatementBlock = getParentStatementBlock(block);
+                  if(parentStatementBlock) {
+                    var previousStatementBlock = parentStatementBlock.previousConnection.targetBlock();
+                    if(previousStatementBlock) { 
+                      textVariableSetBlock.previousConnection.connect(previousStatementBlock.nextConnection);
+                    }
+                    parentStatementBlock.previousConnection.connect(textVariableSetBlock.nextConnection);
+                  }
+                  //setValueInput(block, "TEXT", workspace.newBlock(""));
+                  textBlock = workspace.newBlock("variables_get");
+                  textBlock.setFieldValue(tempVariableName, "VAR");
+                  setValueInput(substringBlock, "STRING", textBlock);
+                }
+                else {
+                  setValueInput(substringBlock, "STRING", textBlock);
+                }
+                setValueInput(indexOfBlock, "VALUE", copyBlock(textBlock));
+                setValueInput(textLengthBlock, "VALUE", copyBlock(textBlock));
+              }
+              
+              if(needleBlock) {
+                if(needleBlock.type !== "text" && needleBlock.type !== "variables_get") {
+                  var needleVariableSetBlock = workspace.newBlock("variables_set");
+                  var tempVariableNeedleName = createNewTempVariable();
+                  needleVariableSetBlock.setFieldValue(tempVariableNeedleName, "VAR");
+                  setValueInput(needleVariableSetBlock, "VALUE", needleBlock);
+                  // append before statement
+                  var parentStatementBlock2 = getParentStatementBlock(block);
+                  if(parentStatementBlock2) {
+                    var previousStatementBlock2 = parentStatementBlock2.previousConnection.targetBlock();
+                    if(previousStatementBlock2) { 
+                      needleVariableSetBlock.previousConnection.connect(previousStatementBlock2.nextConnection);
+                    }
+                    parentStatementBlock2.previousConnection.connect(needleVariableSetBlock.nextConnection);
+                  }
+                  //setValueInput(block, "TEXT", workspace.newBlock(""));
+                  needleBlock = workspace.newBlock("variables_get");
+                  needleBlock.setFieldValue(tempVariableNeedleName, "VAR");
+                }
+                if(needleBlock.type === "variables_get") {
+                  setValueInput(plusBlock, "B", needleLengthBlock);
+                  setValueInput(needleLengthBlock, "VALUE", copyBlock(needleBlock));
+                } else {
+                  var lengthNumberBlock = workspace.newBlock("math_number_general");
+                  lengthNumberBlock.setFieldValue(needleBlock.getFieldValue("TEXT").length, "NUM");
+                  setValueInput(plusBlock, "B", lengthNumberBlock);
+                  needleLengthBlock.dispose();
+                }
+                setValueInput(indexOfBlock, "FIND", needleBlock);
+              } else {
+                setValueInput(plusBlock, "B", needleLengthBlock);              
+              }
+              setValueInput(plusBlock, "A", indexOfBlock);
+              setValueInput(substringBlock, "AT1", plusBlock);
+              setValueInput(substringBlock, "AT2", textLengthBlock);
+              /*
+                // text extract
+                if(textBlock.type === "text" || textBlock.type === "variables_get") {
+                  setValueInput(substringBlock, "STRING", textBlock);
+                  if(needleBlock) {
+                    if(needleBlock.type === "text" || needleBlock.type === "variables_get") {
+                      setValueInput(indexOfBlock, "VALUE", copy(textBlock));
+                      setValueInput(indexOfBlock, "FIND", needleBlock);
+                      setValueInput(textLengthBlock, "VALUE", copy(textBlock));
+                      setValueInput(needleLengthBlock, "VALUE", copy(needleBlock));
+                      setValueInput(plusBlock, "A", indexOfBlock);
+                      if(needleBlock.type === "variables_get") {
+                        setValueInput(plusBlock, "B", textBlockLength);
+                      } else {
+                        var lengthNumberBlock = workspace.newBlock("math_number_general");
+                        lengthNumberBlock.setFieldValue(needleBlock.getFieldValue("TEXT").length, "NUM");
+                        setValueInput(plusBlock, "B", lengthNumberBlock);
+                      }
+                      setValueInput(substringBlock, "AT1", plusBlock);
+                      setValueInput(substringBlock, "AT2", needleLengthBlock);
+
+                    } else {
+                    
+                    }
+                  }
+                } else {
+                 // create variable for text block;
+                  var textVariableSetBlock = workspace.newBlock("variables_set");
+                  textVariableSetBlock.setFieldValue(createNewTempVariable(), "VAR");
+                  if(needleBlock) {
+                    if(needleBlock.type === "text" || needleBlock.type === "variables_get") {
+                   
+                    } else {
+                   
+                    }
+                  }
+                }
+              }
+              */
+              //setValueInput(block.getParent(), substringBlock); -- need to replace below
+              if(block.outputConnection.targetConnection) {
+                block.outputConnection.targetConnection.connect(substringBlock.outputConnection);
+              } else {
+                moveToSameLocation(block, substringBlock);
+              }
+              block.dispose();
+            }
+            
+            
+            else if(block.type === "after_substring-old") {
               //var parentBlock = block.getParent();
               var needleBlock = block.getInputTargetBlock("SUB");
               var textBlock = block.getInputTargetBlock("TEXT");
@@ -430,6 +758,9 @@
                 //atBlock.setParent(block);
               }
               block.type = "js_string_charat";
+            }
+            else if(block.type === "logic_operation_general") {
+              //replaceWithBlock(block, workspace.newBlock("logic_operation"), true);
             }
             /*
             var parent = block.getParent(); 
