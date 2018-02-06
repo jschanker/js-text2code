@@ -1223,7 +1223,7 @@ Blockly.JavaScript['math_number_property_single'] = function(block) {
   // Check if a number is even, odd, prime, whole, positive, or negative
   // or if it is divisible by certain number. Returns true or false.
   var number_to_check = Blockly.JavaScript.valueToCode(block, 'NUMBER_TO_CHECK',
-      Blockly.JavaScript.ORDER_MODULUS) || '0';
+      Blockly.JavaScript.ORDER_MEMBER) || '0';
   var dropdown_property = block.getFieldValue('PROPERTY');
   var code;
   if (dropdown_property == '.is_prime') {
@@ -1488,11 +1488,20 @@ Blockly.JavaScript['logic_boolean_literal'] = function(block) {
 
 Blockly.JavaScript['logic_negate_value'] = function(block) {
   // Negation.
-  var order = Blockly.JavaScript.ORDER_LOGICAL_NOT;
+  var order = Blockly.JavaScript.ORDER_NONE;
   var argument0 = Blockly.JavaScript.valueToCode(block, 'BOOL', order) ||
       'true';
   var code = 'not(' + argument0 +')';
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['js_logic_negate_value'] = function(block) {
+  // Negation.
+  var order = Blockly.JavaScript.ORDER_LOGICAL_NOT;
+  var argument0 = Blockly.JavaScript.valueToCode(block, 'BOOL', order) ||
+      'true';
+  var code = '!' + argument0;
+  return [code, Blockly.JavaScript.ORDER_LOGICAL_NOT];
 };
 
 Blockly.JavaScript['logic_operation_general'] = function(block) {
@@ -1500,9 +1509,9 @@ Blockly.JavaScript['logic_operation_general'] = function(block) {
   var operator = (block.getFieldValue('OP') == 'and') ? 'and' : 'or';
   //var order = (operator == '&&') ? Blockly.JavaScript.ORDER_LOGICAL_AND :
   //    Blockly.JavaScript.ORDER_LOGICAL_OR;
-  var order = Blockly.JavaScript.ORDER_FUNCTION_CALL;
-  var argument0 = Blockly.JavaScript.valueToCode(block, 'A', order);
-  var argument1 = Blockly.JavaScript.valueToCode(block, 'B', order);
+  //var order = Blockly.JavaScript.ORDER_FUNCTION_CALL;
+  var argument0 = Blockly.JavaScript.valueToCode(block, 'A', Blockly.JavaScript.ORDER_MEMBER);
+  var argument1 = Blockly.JavaScript.valueToCode(block, 'B', Blockly.JavaScript.ORDER_NONE);
   if (!argument0 && !argument1) {
     // If there are no arguments, then the return value is false.
     argument0 = 'false';
@@ -1519,6 +1528,31 @@ Blockly.JavaScript['logic_operation_general'] = function(block) {
   }
   var code = argument0 + '.' + operator + '(' + argument1 + ')';
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['js_logic_operation_general'] = function(block) {
+  // Operations 'and', 'or'.
+  var operator = (block.getFieldValue('OP') == 'and') ? '&&' : '||';
+  var order = (operator == '&&') ? Blockly.JavaScript.ORDER_LOGICAL_AND :
+      Blockly.JavaScript.ORDER_LOGICAL_OR;
+  var argument0 = Blockly.JavaScript.valueToCode(block, 'A', order);
+  var argument1 = Blockly.JavaScript.valueToCode(block, 'B', order);
+  if (!argument0 && !argument1) {
+    // If there are no arguments, then the return value is false.
+    argument0 = 'false';
+    argument1 = 'false';
+  } else {
+    // Single missing arguments have no effect on the return value.
+    var defaultArgument = (operator == '&&') ? 'true' : 'false';
+    if (!argument0) {
+      argument0 = defaultArgument;
+    }
+    if (!argument1) {
+      argument1 = defaultArgument;
+    }
+  }
+  var code = argument0 + ' ' + operator + ' ' + argument1;
+  return [code, order];
 };
 
 Blockly.JavaScript['controls_repeat_times'] = function(block) {

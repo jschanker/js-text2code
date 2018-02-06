@@ -1624,6 +1624,29 @@ Blockly.Blocks['logic_negate_value'] = {
   }
 };
 
+Blockly.Blocks['js_logic_negate_value'] = {
+  /**
+   * Block for negation.
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.jsonInit({
+      "message0": "!%1",
+      "args0": [
+        {
+          "type": "input_value",
+          "name": "BOOL",
+          "check": "Boolean"
+        }
+      ],
+      "output": "Boolean",
+      "colour": Blockly.Blocks.logic.HUE,
+      "tooltip": Blockly.Msg.LOGIC_NEGATE_TOOLTIP,
+      "helpUrl": Blockly.Msg.LOGIC_NEGATE_HELPURL
+    });
+  }
+};
+
 Blockly.Blocks['logic_operation_general'] = {
   /**
    * Block for logical operations: 'and', 'or'.
@@ -1633,6 +1656,41 @@ Blockly.Blocks['logic_operation_general'] = {
     var OPERATORS =
         [[Blockly.Msg.LOGIC_OPERATION_AND, 'and'],
          [Blockly.Msg.LOGIC_OPERATION_OR, 'or']];
+    this.setHelpUrl(Blockly.Msg.LOGIC_OPERATION_HELPURL);
+    this.setColour(Blockly.Blocks.logic.HUE);
+    this.setOutput(true, 'Boolean');
+    this.appendValueInput('A')
+        .setCheck('Boolean');
+    this.appendValueInput('B')
+        .setCheck('Boolean')
+        .appendField(".")
+        .appendField(new Blockly.FieldDropdown(OPERATORS), 'OP')
+        .appendField("(");
+    this.appendDummyInput()
+        .appendField(")");
+    this.setInputsInline(true);
+    // Assign 'this' to a variable for use in the tooltip closure below.
+    var thisBlock = this;
+    this.setTooltip(function() {
+      var op = thisBlock.getFieldValue('OP');
+      var TOOLTIPS = {
+        'AND': Blockly.Msg.LOGIC_OPERATION_TOOLTIP_AND,
+        'OR': Blockly.Msg.LOGIC_OPERATION_TOOLTIP_OR
+      };
+      return TOOLTIPS[op];
+    });
+  }
+};
+
+Blockly.Blocks['js_logic_operation_general'] = {
+  /**
+   * Block for logical operations: 'and', 'or'.
+   * @this Blockly.Block
+   */
+  init: function() {
+    var OPERATORS =
+        [["&&", 'and'],
+         ["||", 'or']];
     this.setHelpUrl(Blockly.Msg.LOGIC_OPERATION_HELPURL);
     this.setColour(Blockly.Blocks.logic.HUE);
     this.setOutput(true, 'Boolean');

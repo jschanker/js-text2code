@@ -761,6 +761,11 @@
             }
             else if(block.type === "logic_operation_general") {
               //replaceWithBlock(block, workspace.newBlock("logic_operation"), true);
+              replaceWithBlock(block, workspace.newBlock("js_logic_operation_general"), true);
+            }
+            else if(block.type === "logic_negate_value") {
+              //replaceWithBlock(block, workspace.newBlock("logic_operation"), true);
+              replaceWithBlock(block, workspace.newBlock("js_logic_negate_value"), true);
             }
             /*
             var parent = block.getParent(); 
