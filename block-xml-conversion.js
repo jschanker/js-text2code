@@ -254,7 +254,7 @@
             else if(block.type === "math_number_property_divisible") {
               var remainderBlock = workspace.newBlock("js_remainder");
               var numberBlock = workspace.newBlock("math_number_general");
-              numberBlock.setFieldValue("NUM", "0");
+              numberBlock.setFieldValue(0, "NUM");
               var logicCompareValuesBlock = workspace.newBlock("logic_compare_values");
               setValueInput(logicCompareValuesBlock, "A", remainderBlock);
               setValueInput(logicCompareValuesBlock, "B", numberBlock);
