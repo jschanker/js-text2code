@@ -251,6 +251,17 @@
             else if(block.type === "remainder") {
               block.type = "js_remainder";
             }
+            else if(block.type === "math_number_property_divisible") {
+              var remainderBlock = workspace.newBlock("js_remainder");
+              var numberBlock = workspace.newBlock("math_number_general");
+              numberBlock.setFieldValue("NUM", "0");
+              var logicCompareValuesBlock = workspace.newBlock("logic_compare_values");
+              setValueInput(logicCompareValuesBlock, "A", remainderBlock);
+              setValueInput(logicCompareValuesBlock, "B", numberBlock);
+              moveInputBlock(block, remainderBlock, "NUMBER_TO_CHECK", "A");
+              moveInputBlock(block, remainderBlock, "DIVISOR", "B");
+              replaceWithBlock(block, logicCompareValuesBlock, true);
+            }
             else if(block.type === "seconds_to_minutes" ||
                     block.type === "minutes_to_hours" ||
                     block.type === "hours_to_days" || 
