@@ -195,7 +195,11 @@ Number.prototype.isOdd = function() {
 }
 
 Number.prototype.isWhole = function() {
-  return (this.valueOf() >= 0) && ((this.valueOf() % 1) === 0);
+  return (this.valueOf() >= 0) && this.isInteger();
+}
+
+Number.prototype.isInteger = function() {
+  return this.valueOf() % 1 === 0;
 }
 
 Number.prototype.isPositive = function() {
@@ -1259,8 +1263,8 @@ Blockly.JavaScript['math_number_property_single'] = function(block) {
     case '.is_odd':
       code = number_to_check + ' .isOdd()';
       break;
-    case '.is_whole':
-      code = number_to_check + ' .isWhole()';
+    case '.is_integer':
+      code = number_to_check + ' .isInteger()';
       break;
     case '.is_positive':
       code = number_to_check + ' .isPositive()';
@@ -1305,10 +1309,10 @@ Blockly.JavaScript['quotient'] = function(block) {
 
 Blockly.JavaScript['remainder'] = function(block) {
   var dividend = Blockly.JavaScript.valueToCode(block, 'A',
-      Blockly.JavaScript.ORDER_MODULUS) || '0';
+      Blockly.JavaScript.ORDER_NONE) || '0';
   var code;
   var divisor = Blockly.JavaScript.valueToCode(block, 'B',
-                Blockly.JavaScript.ORDER_MODULUS) || '0';
+                Blockly.JavaScript.ORDER_NONE) || '0';
   code = 'remainderOf(' + dividend + ').dividedBy(' + divisor + ')';
 
   return [code, Blockly.JavaScript.ORDER_FUNCTION];

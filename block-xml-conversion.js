@@ -179,6 +179,7 @@
 */
 
       if(dispose) block.dispose();
+      return replaceBlock;
       //if(dispose && block.getChildren().length === 0) block.dispose();
     }
             if(block.type === "units_print") {
@@ -258,9 +259,54 @@
               var logicCompareValuesBlock = workspace.newBlock("logic_compare_values");
               setValueInput(logicCompareValuesBlock, "A", remainderBlock);
               setValueInput(logicCompareValuesBlock, "B", numberBlock);
+              logicCompareValuesBlock.setFieldValue("==", "OP");
               moveInputBlock(block, remainderBlock, "NUMBER_TO_CHECK", "A");
               moveInputBlock(block, remainderBlock, "DIVISOR", "B");
               replaceWithBlock(block, logicCompareValuesBlock, true);
+            }
+            else if(block.type === "math_number_property_single") {
+              var property = block.getFieldValue("PROPERTY");
+              var numberOneBlock = null;
+              var numberTwoBlock = null;
+              alert(property);
+              if(property === ".is_even") {
+                var divisibleBlock = replaceWithBlock(block, workspace.newBlock("math_number_property_divisible"), true);                
+                var numberTwoBlock = workspace.newBlock("math_number_general");
+                numberTwoBlock.setFieldValue(2, "NUM");
+                setValueInput(divisibleBlock, "DIVISOR", numberTwoBlock);
+                convertToJSBlock(divisibleBlock);
+              }
+              else if(property === ".is_odd") {
+                var remainderBlock = workspace.newBlock("js_remainder");
+                var numberBlock = workspace.newBlock("math_number_general");
+                numberBlock.setFieldValue(0, "NUM");
+                var numberTwoBlock = workspace.newBlock("math_number_general");
+                numberTwoBlock.setFieldValue(2, "NUM");
+                var logicCompareValuesBlock = workspace.newBlock("logic_compare_values");
+                logicCompareValuesBlock.setFieldValue("!=", "OP");
+                setValueInput(logicCompareValuesBlock, "A", remainderBlock);
+                setValueInput(logicCompareValuesBlock, "B", numberBlock);
+                moveInputBlock(block, remainderBlock, "NUMBER_TO_CHECK", "A");
+                setValueInput(remainderBlock, "B", numberTwoBlock);
+                replaceWithBlock(block, logicCompareValuesBlock, true);
+              }
+              else if(property === ".is_positive" || property === ".is_negative") {
+                var numberBlock = workspace.newBlock("math_number_general");
+                numberBlock.setFieldValue(0, "NUM");
+                var logicCompareValuesBlock = workspace.newBlock("logic_compare_values");
+                moveInputBlock(block, logicCompareValuesBlock, "NUMBER_TO_CHECK", "A");
+                setValueInput(logicCompareValuesBlock, "B", numberBlock);
+                if(property === ".is_positive") logicCompareValuesBlock.setFieldValue(">", "OP");
+                else logicCompareValuesBlock.setFieldValue("<", "OP");
+                replaceWithBlock(block, logicCompareValuesBlock, true);
+              }
+              else if(property === ".is_integer") {
+                var divisibleBlock = replaceWithBlock(block, workspace.newBlock("math_number_property_divisible"), true);                
+                var numberTwoBlock = workspace.newBlock("math_number_general");
+                numberTwoBlock.setFieldValue(1, "NUM");
+                setValueInput(divisibleBlock, "DIVISOR", numberTwoBlock);
+                convertToJSBlock(divisibleBlock);                
+              }
             }
             else if(block.type === "seconds_to_minutes" ||
                     block.type === "minutes_to_hours" ||

@@ -1969,7 +1969,7 @@ Blockly.Blocks['controls_if_else_logic'] = {
 
 Blockly.Blocks['math_number_property_single'] = {
   /**
-   * Block for checking if a number is even, odd, prime, whole, positive,
+   * Block for checking if a number is even, odd, prime, integer, positive,
    * negative or if it is divisible by certain number.
    * @this Blockly.Block
    */
@@ -1978,7 +1978,7 @@ Blockly.Blocks['math_number_property_single'] = {
         [['.isEven()', '.is_even'],
          ['.isOdd()', '.is_odd'],
          ['.isPrime()', '.is_prime'],
-         ['.isWhole()', '.is_whole'],
+         ['.isInteger()', '.is_integer'],
          ['.isPositive()', '.is_positive'],
          ['.isNegative()', '.is_negative']];
     this.setColour(Blockly.Blocks.math.HUE);
@@ -1995,8 +1995,7 @@ Blockly.Blocks['math_number_property_single'] = {
 
 Blockly.Blocks['math_number_property_divisible'] = {
   /**
-   * Block for checking if a number is even, odd, prime, whole, positive,
-   * negative or if it is divisible by certain number.
+   * Block for checking if a number is divisible by certain number.
    * @this Blockly.Block
    */
   init: function() {
