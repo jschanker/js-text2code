@@ -268,7 +268,7 @@
               var property = block.getFieldValue("PROPERTY");
               var numberOneBlock = null;
               var numberTwoBlock = null;
-              alert(property);
+              //alert(property);
               if(property === ".is_even") {
                 var divisibleBlock = replaceWithBlock(block, workspace.newBlock("math_number_property_divisible"), true);                
                 var numberTwoBlock = workspace.newBlock("math_number_general");
